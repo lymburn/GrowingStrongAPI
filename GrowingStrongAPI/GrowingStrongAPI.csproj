@@ -18,5 +18,9 @@
   <ItemGroup>
     <Folder Include="DataAccess\" />
     <Folder Include="Models\" />
+    <Folder Include="Services\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="DataAccess\User\" />
+    <Folder Include="DataAccess\DbConnection\" />
   </ItemGroup>
 </Project>

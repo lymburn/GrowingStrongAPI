@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using GrowingStrongAPI.DataAccess;
+using GrowingStrongAPI.Services;
+using GrowingStrongAPI.Helpers;
 
 namespace GrowingStrongAPI
 {
@@ -27,6 +29,10 @@ namespace GrowingStrongAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserDataAccess, UserDataAccess>();
+            services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
