@@ -21,7 +21,7 @@ namespace GrowingStrongAPI.Controllers
         {
             _userService = userService;
         }
-        
+
         [HttpGet]
         public IEnumerable<string> GetAll()
         {
@@ -37,8 +37,9 @@ namespace GrowingStrongAPI.Controllers
             return Ok(user);
         }
 
-        [HttpPost]
-        public void CreateUser([FromBody]User userDetails)
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public void Register([FromBody]User userDetails)
         {
             Console.WriteLine($"Creating new user with details {userDetails.Id}, {userDetails.FirstName}, {userDetails.LastName}");
         }

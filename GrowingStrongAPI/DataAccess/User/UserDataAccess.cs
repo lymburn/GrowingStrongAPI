@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Models;
-
+using GrowingStrongAPI.Schemas;
 
 namespace GrowingStrongAPI.DataAccess
 {
@@ -20,7 +20,9 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $"INSERT INTO useraccount(username, email_address, first_name, last_name) VALUES ({user.Username}, {user.EmailAddress}, {user.FirstName}, {user.LastName})";
+                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.Username}, {UserSchema.Columns.EmailAddress}, {UserSchema.Columns.FirstName}, {UserSchema.Columns.LastName})
+                                VALUES ({user.Username}, {user.EmailAddress}, {user.FirstName}, {user.LastName})";
+
                 connection.Open();
                 connection.Execute(sql);
             }
@@ -30,7 +32,9 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $"SELECT * FROM useraccount WHERE username = '{username}'";
+                string sql = $@"SELECT * FROM {UserSchema.Table}
+                                WHERE {UserSchema.Columns.Username} = '{username}'";
+
                 connection.Open();
                 return connection.Query<User>(sql).AsList();
             }
@@ -40,7 +44,9 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $"SELECT * FROM useraccount WHERE id = {id}";
+                string sql = $@"SELECT * FROM {UserSchema.Table}
+                                WHERE {UserSchema.Columns.Id} = {id}";
+
                 connection.Open();
                 return connection.Query<User>(sql).AsList();
             }

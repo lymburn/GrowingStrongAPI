@@ -9,7 +9,7 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'GrowingStrongAPI' ">
     <StartAction>Project</StartAction>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:5000</ApplicationURL>
+    <ApplicationURL>http://localhost:5002</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -22,5 +22,7 @@
     <Folder Include="Helpers\" />
     <Folder Include="DataAccess\User\" />
     <Folder Include="DataAccess\DbConnection\" />
+    <Folder Include="Helpers\Extensions\" />
+    <Folder Include="Schemas\" />
   </ItemGroup>
 </Project>

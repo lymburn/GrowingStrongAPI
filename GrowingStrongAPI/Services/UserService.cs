@@ -38,6 +38,8 @@ namespace GrowingStrongAPI.Services
                 return null;
             }
 
+            _userDataAccess.InsertUser(user);
+
             return null;
         }
     }

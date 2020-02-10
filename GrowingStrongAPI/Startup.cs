@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Dapper;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Services;
 using GrowingStrongAPI.Helpers;
@@ -43,6 +44,8 @@ namespace GrowingStrongAPI
                 app.UseDeveloperExceptionPage();
                 ConnectionHelper.ConnectionString = Configuration.GetConnectionString("DefaultConnection");
             }
+
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
             app.UseHttpsRedirection();
 
