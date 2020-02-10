@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Dapper;
+using AutoMapper;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Services;
 using GrowingStrongAPI.Helpers;
@@ -30,6 +30,7 @@ namespace GrowingStrongAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserDataAccess, UserDataAccess>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();

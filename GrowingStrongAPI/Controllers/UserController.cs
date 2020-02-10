@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 using Dapper;
 using Npgsql;
 using GrowingStrongAPI.Helpers;
@@ -16,9 +17,11 @@ namespace GrowingStrongAPI.Controllers
     public class UserController : Controller
     {
         private IUserService _userService;
+        private IMapper _mapper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper)
         {
+            _mapper = mapper;
             _userService = userService;
         }
 
@@ -39,9 +42,14 @@ namespace GrowingStrongAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public void Register([FromBody]User userDetails)
+        public IActionResult Register([FromBody]RegistrationDetails registrationDetails)
         {
-            Console.WriteLine($"Creating new user with details {userDetails.Id}, {userDetails.FirstName}, {userDetails.LastName}");
+            //Console.WriteLine($"Creating new user with details {userDetails.Id}, {userDetails.FirstName}, {userDetails.LastName}");
+            User user = _mapper.Map<User>(registrationDetails);
+
+            _userService.Create(user, registrationDetails.Password);
+            return Ok();
+            
         }
 
         //// PUT api/values/5
