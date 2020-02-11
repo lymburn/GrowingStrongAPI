@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Services;
 using GrowingStrongAPI.Helpers;
@@ -32,7 +33,7 @@ namespace GrowingStrongAPI
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserDataAccess, UserDataAccess>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 
         }

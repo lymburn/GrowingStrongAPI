@@ -28,4 +28,7 @@
     <Folder Include="Entities\" />
     <Folder Include="Helpers\Schemas\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="DataAccess\Repository.cs" />
+  </ItemGroup>
 </Project>

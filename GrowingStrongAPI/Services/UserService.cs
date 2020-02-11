@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 
@@ -8,11 +8,11 @@ namespace GrowingStrongAPI.Services
 {
     public class UserService : IUserService
     {
-        private IUserDataAccess _userDataAccess;
+        private IUserRepository _userRepository;
 
-        public UserService(IUserDataAccess userDataAccess)
+        public UserService(IUserRepository userRepository)
         {
-            _userDataAccess = userDataAccess;
+            _userRepository = userRepository;
         }
 
         public User Authenticate(string username, string password)
@@ -27,18 +27,18 @@ namespace GrowingStrongAPI.Services
 
         public User GetById(int id)
         {
-            return _userDataAccess.FindUserById(id).FirstOrDefault();
+            return _userRepository.GetById(id);
         }
 
         public User Create(User user, string password)
         {
-            if (_userDataAccess.FindUserByUsername(user.Username).Any())
+            if (!(_userRepository.GetByUsername(user.Username) is null))
             {
                 Console.WriteLine("Username already exists");
                 return null;
             }
 
-            _userDataAccess.InsertUser(user);
+            _userRepository.Create(user);
 
             return null;
         }

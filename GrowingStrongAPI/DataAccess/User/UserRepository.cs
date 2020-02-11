@@ -4,19 +4,50 @@ using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Helpers.Schemas;
+using System.Linq;
 
 namespace GrowingStrongAPI.DataAccess
 {
-    public class UserDataAccess : IUserDataAccess
+    public class UserRepository : IUserRepository
     {
         private IDbConnectionFactory _dbConnectionFactory;
 
-        public UserDataAccess(IDbConnectionFactory dbConnectionFactory)
+        public UserRepository(IDbConnectionFactory dbConnectionFactory)
         {
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public void InsertUser(User user)
+        public User GetById(int id)
+        {
+            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            {
+                string sql = $@"SELECT * FROM {UserSchema.Table}
+                                WHERE {UserSchema.Columns.Id} = {id}";
+
+                connection.Open();
+
+                User user = connection.Query<User>(sql).AsList().FirstOrDefault();
+
+                return user;
+            }
+        }
+
+        public User GetByUsername(string username)
+        {
+            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            {
+                string sql = $@"SELECT * FROM {UserSchema.Table}
+                                WHERE {UserSchema.Columns.Username} = '{username}'";
+
+                connection.Open();
+
+                User user = connection.Query<User>(sql).AsList().FirstOrDefault();
+
+                return user;
+            }
+        }
+
+        public User Create(User user)
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
@@ -26,30 +57,8 @@ namespace GrowingStrongAPI.DataAccess
                 connection.Open();
                 connection.Execute(sql);
             }
-        }
 
-        public List<User> FindUserByUsername(string username)
-        {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
-            {
-                string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.Username} = '{username}'";
-
-                connection.Open();
-                return connection.Query<User>(sql).AsList();
-            }
-        }
-
-        public List<User> FindUserById(int id)
-        {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
-            {
-                string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.Id} = {id}";
-
-                connection.Open();
-                return connection.Query<User>(sql).AsList();
-            }
+            return user;
         }
     }
 }
