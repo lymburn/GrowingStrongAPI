@@ -22,7 +22,7 @@ namespace GrowingStrongAPI.Services
 
         public IEnumerable<User> GetAll()
         {
-            throw new NotImplementedException();
+            return _userRepository.GetAll();
         }
 
         public User GetById(int id)

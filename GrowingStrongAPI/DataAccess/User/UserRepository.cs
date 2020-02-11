@@ -17,6 +17,20 @@ namespace GrowingStrongAPI.DataAccess
             _dbConnectionFactory = dbConnectionFactory;
         }
 
+        public IEnumerable<User> GetAll()
+        {
+            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            {
+                string sql = $@"SELECT * FROM {UserSchema.Table}";
+
+                connection.Open();
+
+                IEnumerable<User> users = connection.Query<User>(sql);
+
+                return users;
+            }
+        }
+
         public User GetById(int id)
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))

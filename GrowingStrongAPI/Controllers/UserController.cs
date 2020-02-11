@@ -26,10 +26,12 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> GetAll()
+        public IActionResult GetAll()
         {
             Console.WriteLine("Fetching all users");
-            return new string[] { "value1", "value2" };
+            List<User> users = _userService.GetAll().AsList();
+
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
