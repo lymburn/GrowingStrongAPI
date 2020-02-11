@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 
 namespace GrowingStrongAPI.Helpers
 {
