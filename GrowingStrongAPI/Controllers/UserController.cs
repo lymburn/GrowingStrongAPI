@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Dapper;
 using Npgsql;
-using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Services;
 
 namespace GrowingStrongAPI.Controllers
@@ -42,12 +42,12 @@ namespace GrowingStrongAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody]RegistrationDetails registrationDetails)
+        public IActionResult Register([FromBody]RegistrationModel registrationModel)
         {
             //Console.WriteLine($"Creating new user with details {userDetails.Id}, {userDetails.FirstName}, {userDetails.LastName}");
-            User user = _mapper.Map<User>(registrationDetails);
+            User user = _mapper.Map<User>(registrationModel);
 
-            _userService.Create(user, registrationDetails.Password);
+            _userService.Create(user, registrationModel.Password);
             return Ok();
             
         }

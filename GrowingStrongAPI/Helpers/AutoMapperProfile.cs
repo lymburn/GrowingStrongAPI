@@ -8,7 +8,7 @@ namespace GrowingStrongAPI.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<RegistrationDetails, User>();
+            CreateMap<RegistrationModel, User>();
         }
     }
 }

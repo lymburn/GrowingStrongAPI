@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 
 namespace GrowingStrongAPI.Services

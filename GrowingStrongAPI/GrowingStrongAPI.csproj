@@ -25,6 +25,7 @@
     <Folder Include="DataAccess\User\" />
     <Folder Include="DataAccess\DbConnection\" />
     <Folder Include="Helpers\Extensions\" />
-    <Folder Include="Schemas\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Helpers\Schemas\" />
   </ItemGroup>
 </Project>

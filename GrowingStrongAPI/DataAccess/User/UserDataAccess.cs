@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Dapper;
 using GrowingStrongAPI.Helpers;
-using GrowingStrongAPI.Models;
-using GrowingStrongAPI.Schemas;
+using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Helpers.Schemas;
 
 namespace GrowingStrongAPI.DataAccess
 {

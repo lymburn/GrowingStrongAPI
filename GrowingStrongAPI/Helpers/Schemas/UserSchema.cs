@@ -1,8 +1,8 @@
 ﻿using System;
-using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Helpers.Extensions;
 
-namespace GrowingStrongAPI.Schemas
+namespace GrowingStrongAPI.Helpers.Schemas
 {
     public static class UserSchema
     {

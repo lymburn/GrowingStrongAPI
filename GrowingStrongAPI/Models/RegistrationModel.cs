@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GrowingStrongAPI.Models
 {
-    public class RegistrationDetails
+    public class RegistrationModel
     {
         [Required]
         public string FirstName { get; set; }

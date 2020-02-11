@@ -1,5 +1,5 @@
 ﻿using System;
-using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 using System.Collections.Generic;
 
 namespace GrowingStrongAPI.DataAccess

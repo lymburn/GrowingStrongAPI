@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Entities;
 
 namespace GrowingStrongAPI.Services
 {

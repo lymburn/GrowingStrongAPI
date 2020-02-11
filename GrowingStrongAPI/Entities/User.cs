@@ -1,5 +1,5 @@
 ﻿using System;
-namespace GrowingStrongAPI.Models
+namespace GrowingStrongAPI.Entities
 {
     public class User
     {
