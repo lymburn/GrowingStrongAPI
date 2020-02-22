@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Npgsql;
 using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Entities;
@@ -65,12 +66,30 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress})
-                                VALUES ({user.EmailAddress}";
+                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
+                                VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)";
+
+                NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+
+                NpgsqlParameter emailParam = new NpgsqlParameter("@EmailAddress", NpgsqlTypes.NpgsqlDbType.Varchar);
+
+                NpgsqlParameter passwordHashParam = new NpgsqlParameter("@PasswordHash", NpgsqlTypes.NpgsqlDbType.Bytea);
+
+                NpgsqlParameter passwordSaltParam = new NpgsqlParameter("@PasswordSalt", NpgsqlTypes.NpgsqlDbType.Bytea);
+
+                emailParam.Value = user.EmailAddress;
+
+                passwordHashParam.Value = user.PasswordHash;
+
+                passwordSaltParam.Value = user.PasswordSalt;
+
+                NpgsqlParameter[] parameters = new NpgsqlParameter[] { emailParam, passwordHashParam, passwordSaltParam };
+
+                command.Parameters.AddRange(parameters);
 
                 connection.Open();
 
-                connection.Execute(sql);
+                command.ExecuteNonQuery();
             }
 
             return user;
