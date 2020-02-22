@@ -25,6 +25,20 @@ namespace GrowingStrongAPI.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] AuthenticateModel authenticateModel)
+        {
+            var user = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
+
+            if (user is null)
+            {
+                return BadRequest("Invalid username or password");
+            }
+
+            return Ok("Authenticated");
+        }
+
         [HttpGet]
         public IActionResult GetAll()
         {

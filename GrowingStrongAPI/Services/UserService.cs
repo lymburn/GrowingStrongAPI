@@ -15,9 +15,26 @@ namespace GrowingStrongAPI.Services
             _userRepository = userRepository;
         }
 
-        public User Authenticate(string username, string password)
+        public User Authenticate(string emailAddress, string password)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(password))
+            {
+                return null;
+            }
+                
+            User user = _userRepository.GetByEmailAddress(emailAddress);
+
+            if (user is null)
+            {
+                return null;
+            }
+
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            {
+                return null;
+            }
+
+            return user;
         }
 
         public IEnumerable<User> GetAll()
@@ -44,9 +61,11 @@ namespace GrowingStrongAPI.Services
             }
 
             byte[] passwordHash, passwordSalt;
+
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
             user.PasswordHash = passwordHash;
+
             user.PasswordSalt = passwordSalt;
 
             _userRepository.Create(user);
@@ -70,10 +89,46 @@ namespace GrowingStrongAPI.Services
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
+
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-
         }
 
+        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
+        {
+            if (password is null)
+            {
+                throw new ArgumentNullException("password");
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Password value cannot be empty or whitesapce only");
+            }
+
+            if (storedHash.Length != 64)
+            {
+                throw new ArgumentException("Invalid length of password hash (64 bytes expected).");
+            }
+
+            if (storedSalt.Length != 128)
+            {
+                throw new ArgumentException("Invalid length of password salt (128 bytes expected).");
+            }
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != storedHash[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }
