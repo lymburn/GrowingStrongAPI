@@ -6,7 +6,7 @@ namespace GrowingStrongAPI.DataAccess
 {
     public interface IUserRepository : IRepository<User>
     {
-        User GetByUsername(string username);
+        User GetByEmailAddress(string emailAddress);
         IEnumerable<User> GetAll();
     }
 }

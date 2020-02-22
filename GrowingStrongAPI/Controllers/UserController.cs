@@ -29,6 +29,7 @@ namespace GrowingStrongAPI.Controllers
         public IActionResult GetAll()
         {
             Console.WriteLine("Fetching all users");
+
             List<User> users = _userService.GetAll().AsList();
 
             return Ok(users);
@@ -38,7 +39,9 @@ namespace GrowingStrongAPI.Controllers
         public IActionResult GetById(int id)
         {
             Console.WriteLine($"Fetching user with id {id}");
+
             User user = _userService.GetById(id);
+
             return Ok(user);
         }
 
@@ -46,10 +49,10 @@ namespace GrowingStrongAPI.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegistrationModel registrationModel)
         {
-            //Console.WriteLine($"Creating new user with details {userDetails.Id}, {userDetails.FirstName}, {userDetails.LastName}");
             User user = _mapper.Map<User>(registrationModel);
 
             _userService.Create(user, registrationModel.Password);
+
             return Ok();
             
         }

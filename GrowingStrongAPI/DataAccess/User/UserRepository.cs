@@ -46,12 +46,12 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public User GetByUsername(string username)
+        public User GetByEmailAddress(string emailAddress)
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
                 string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.Username} = '{username}'";
+                                WHERE {UserSchema.Columns.EmailAddress} = '{emailAddress}'";
 
                 connection.Open();
 
@@ -65,10 +65,11 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.Username}, {UserSchema.Columns.EmailAddress}, {UserSchema.Columns.FirstName}, {UserSchema.Columns.LastName})
-                                VALUES ({user.Username}, {user.EmailAddress}, {user.FirstName}, {user.LastName})";
+                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress})
+                                VALUES ({user.EmailAddress}";
 
                 connection.Open();
+
                 connection.Execute(sql);
             }
 

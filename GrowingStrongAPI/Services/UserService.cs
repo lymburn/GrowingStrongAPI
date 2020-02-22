@@ -32,7 +32,7 @@ namespace GrowingStrongAPI.Services
 
         public User Create(User user, string password)
         {
-            if (!(_userRepository.GetByUsername(user.Username) is null))
+            if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
             {
                 Console.WriteLine("Username already exists");
                 return null;
