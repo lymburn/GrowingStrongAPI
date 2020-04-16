@@ -1,5 +1,5 @@
 ﻿using System;
-namespace GrowingStrongAPI.DataAccess
+namespace GrowingStrongAPI.Helpers
 {
     public static class ConnectionHelper
     {
