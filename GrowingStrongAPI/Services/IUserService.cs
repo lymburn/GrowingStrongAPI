@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Entities;
 
 namespace GrowingStrongAPI.Services
 {
     public interface IUserService
     {
-        User Authenticate(string emailAddress, string password);
+        UserDto Authenticate(string emailAddress, string password);
         IEnumerable<User> GetAll();
-        User GetById(int id);
-        User Create(User user, string password);
+        UserDto GetById(int id);
+        void Create(User user, string password);
     }
 }

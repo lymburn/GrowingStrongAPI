@@ -62,7 +62,7 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public User Create(User user)
+        public void Create(User user)
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
@@ -91,8 +91,6 @@ namespace GrowingStrongAPI.DataAccess
 
                 command.ExecuteNonQuery();
             }
-
-            return user;
         }
     }
 }

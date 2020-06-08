@@ -8,8 +8,9 @@
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'GrowingStrongAPI' ">
     <StartAction>Project</StartAction>
+    <ExternalConsole>true</ExternalConsole>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:5000</ApplicationURL>
+    <ApplicationURL>http://localhost:11081</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />

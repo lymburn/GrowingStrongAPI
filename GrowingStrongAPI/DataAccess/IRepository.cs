@@ -6,6 +6,6 @@ namespace GrowingStrongAPI.DataAccess
     public interface IRepository<T> where T : EntityBase
     {
         T GetById(int id);
-        T Create(T entity);
+        void Create(T entity);
     }
 }

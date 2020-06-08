@@ -3,19 +3,24 @@ using System.Linq;
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
+using GrowingStrongAPI.Models;
+using AutoMapper;
 
 namespace GrowingStrongAPI.Services
 {
     public class UserService : IUserService
     {
         private IUserRepository _userRepository;
+        private IMapper _mapper;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository,
+                           IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public User Authenticate(string emailAddress, string password)
+        public UserDto Authenticate(string emailAddress, string password)
         {
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(password))
             {
@@ -34,7 +39,9 @@ namespace GrowingStrongAPI.Services
                 return null;
             }
 
-            return user;
+            UserDto userDto = _mapper.Map<UserDto>(user);
+
+            return userDto;
         }
 
         public IEnumerable<User> GetAll()
@@ -42,12 +49,15 @@ namespace GrowingStrongAPI.Services
             return _userRepository.GetAll();
         }
 
-        public User GetById(int id)
+        public UserDto GetById(int id)
         {
-            return _userRepository.GetById(id);
+            User user = _userRepository.GetById(id);
+            UserDto userDto = _mapper.Map<UserDto>(user);
+
+            return userDto;
         }
 
-        public User Create(User user, string password)
+        public void Create(User user, string password)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -57,7 +67,7 @@ namespace GrowingStrongAPI.Services
             if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
             {
                 Console.WriteLine("Email address already exists");
-                return null;
+                return;
             }
 
             byte[] passwordHash, passwordSalt;
@@ -69,8 +79,6 @@ namespace GrowingStrongAPI.Services
             user.PasswordSalt = passwordSalt;
 
             _userRepository.Create(user);
-
-            return null;
         }
 
         //Helpers
