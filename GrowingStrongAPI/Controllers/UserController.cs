@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
@@ -21,14 +22,17 @@ namespace GrowingStrongAPI.Controllers
         private IUserService _userService;
         private IMapper _mapper;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public UserController(IUserService userService,
                               IMapper mapper,
-                              IOptions<AppSettings> appSettings)
+                              IOptions<AppSettings> appSettings,
+                              ILogger<UserController> logger)
         {
             _mapper = mapper;
             _userService = userService;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
         [AllowAnonymous]
@@ -65,11 +69,9 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             UserDto user = _userService.GetById(id);
-
             return Ok(user);
         }
 

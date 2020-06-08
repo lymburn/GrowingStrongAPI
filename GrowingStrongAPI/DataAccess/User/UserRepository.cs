@@ -5,6 +5,7 @@ using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Helpers.Schemas;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace GrowingStrongAPI.DataAccess
@@ -12,10 +13,13 @@ namespace GrowingStrongAPI.DataAccess
     public class UserRepository : IUserRepository
     {
         private IDbConnectionFactory _dbConnectionFactory;
+        private readonly ILogger _logger;
 
-        public UserRepository(IDbConnectionFactory dbConnectionFactory)
+        public UserRepository(IDbConnectionFactory dbConnectionFactory,
+                              ILogger<IUserRepository> logger)
         {
             _dbConnectionFactory = dbConnectionFactory;
+            _logger = logger;
         }
 
         public IEnumerable<User> GetAll()

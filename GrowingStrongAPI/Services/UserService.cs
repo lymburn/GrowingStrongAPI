@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
+using Microsoft.Extensions.Logging;
 using AutoMapper;
 
 namespace GrowingStrongAPI.Services
@@ -12,12 +13,15 @@ namespace GrowingStrongAPI.Services
     {
         private IUserRepository _userRepository;
         private IMapper _mapper;
+        private readonly ILogger _logger;
 
         public UserService(IUserRepository userRepository,
-                           IMapper mapper)
+                           IMapper mapper,
+                           ILogger<IUserService> logger)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public UserDto Authenticate(string emailAddress, string password)
