@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>GrowingStrongAPI</AssemblyName>
+    <UserSecretsId>c9f011e7-7489-4256-bc5f-c7afa971dd33</UserSecretsId>
   </PropertyGroup>
 
 
@@ -10,7 +11,7 @@
     <StartAction>Project</StartAction>
     <ExternalConsole>true</ExternalConsole>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:37089</ApplicationURL>
+    <ApplicationURL>http://localhost:58002</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />

@@ -69,6 +69,7 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             UserDto user = _userService.GetById(id);

@@ -40,8 +40,10 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
             {
-                string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.Id} = {id}";
+                //string sql = $@"SELECT * FROM {UserSchema.Table}
+                //                WHERE {UserSchema.Columns.Id} = {id}";
+
+                string sql = $@"SELECT * FROM get_user_account_by_id({id})";
 
                 connection.Open();
 

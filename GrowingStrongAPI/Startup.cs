@@ -33,11 +33,8 @@ namespace GrowingStrongAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.JWTSecret);
+            var JWTSecret = Configuration["JWTSecret"];
+            var key = Encoding.ASCII.GetBytes(JWTSecret);
 
             services.AddAuthentication(x =>
             {
@@ -82,7 +79,7 @@ namespace GrowingStrongAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                ConnectionHelper.ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+                ConnectionHelper.ConnectionString = Configuration["ConnectionStringDevelopment"];
             }
 
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -93,7 +90,7 @@ namespace GrowingStrongAPI
             app.UseRouting();
 
             app.UseAuthentication();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
