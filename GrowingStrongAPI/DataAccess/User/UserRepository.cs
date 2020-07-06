@@ -5,6 +5,7 @@ using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Helpers.Schemas;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 
 namespace GrowingStrongAPI.DataAccess
@@ -12,15 +13,18 @@ namespace GrowingStrongAPI.DataAccess
     public class UserRepository : IUserRepository
     {
         private IDbConnectionFactory _dbConnectionFactory;
+        private readonly ILogger _logger;
 
-        public UserRepository(IDbConnectionFactory dbConnectionFactory)
+        public UserRepository(IDbConnectionFactory dbConnectionFactory,
+                              ILogger<IUserRepository> logger)
         {
             _dbConnectionFactory = dbConnectionFactory;
+            _logger = logger;
         }
 
         public IEnumerable<User> GetAll()
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"SELECT * FROM {UserSchema.Table}";
 
@@ -34,10 +38,12 @@ namespace GrowingStrongAPI.DataAccess
 
         public User GetById(int id)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
-                string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.Id} = {id}";
+                //string sql = $@"SELECT * FROM {UserSchema.Table}
+                //                WHERE {UserSchema.Columns.Id} = {id}";
+
+                string sql = $@"SELECT * FROM get_user_account_by_id({id})";
 
                 connection.Open();
 
@@ -49,7 +55,7 @@ namespace GrowingStrongAPI.DataAccess
 
         public User GetByEmailAddress(string emailAddress)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"SELECT * FROM {UserSchema.Table}
                                 WHERE {UserSchema.Columns.EmailAddress} = '{emailAddress}'";
@@ -62,9 +68,9 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public User Create(User user)
+        public void Create(User user)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
                                 VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)";
@@ -91,8 +97,6 @@ namespace GrowingStrongAPI.DataAccess
 
                 command.ExecuteNonQuery();
             }
-
-            return user;
         }
     }
 }

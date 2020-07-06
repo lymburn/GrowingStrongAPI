@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Text;
-using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using Dapper;
-using Npgsql;
 using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Services;
@@ -25,51 +21,37 @@ namespace GrowingStrongAPI.Controllers
     {
         private IUserService _userService;
         private IMapper _mapper;
-        private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
         public UserController(IUserService userService,
                               IMapper mapper,
-                              IOptions<AppSettings> appSettings)
+                              ILogger<UserController> logger)
         {
             _mapper = mapper;
             _userService = userService;
-            _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateModel authenticateModel)
         {
-            var user = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
+            UserDto user = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
 
             if (user is null)
             {
                 return BadRequest("Invalid username or password");
             }
 
-            //Create JWT token
-            var tokenHandler = new JwtSecurityTokenHandler();
+            string tokenString = JwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
 
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+            if (string.IsNullOrEmpty(tokenString))
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            var tokenString = tokenHandler.WriteToken(token);
+                return StatusCode(500, "Unable to generate JWT string");
+            }
 
             return Ok(new
             {
-                user.Id,
-                user.EmailAddress,
                 Token = tokenString
             });
         }
@@ -83,10 +65,10 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
-            User user = _userService.GetById(id);
-
+            UserDto user = _userService.GetById(id);
             return Ok(user);
         }
 

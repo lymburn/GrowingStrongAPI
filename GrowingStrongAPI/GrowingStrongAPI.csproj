@@ -3,13 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>GrowingStrongAPI</AssemblyName>
+    <UserSecretsId>c9f011e7-7489-4256-bc5f-c7afa971dd33</UserSecretsId>
   </PropertyGroup>
 
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'GrowingStrongAPI' ">
     <StartAction>Project</StartAction>
+    <ExternalConsole>true</ExternalConsole>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:5000</ApplicationURL>
+    <ApplicationURL>http://localhost:59306</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -17,6 +19,9 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.4" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataAccess\" />
