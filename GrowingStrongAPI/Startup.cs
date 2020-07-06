@@ -35,6 +35,7 @@ namespace GrowingStrongAPI
 
             var JWTSecret = Configuration["JWTSecret"];
             var key = Encoding.ASCII.GetBytes(JWTSecret);
+            ConfigurationsHelper.JWTSecret = JWTSecret;
 
             services.AddAuthentication(x =>
             {
@@ -79,7 +80,7 @@ namespace GrowingStrongAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                ConnectionHelper.ConnectionString = Configuration["ConnectionStringDevelopment"];
+                ConfigurationsHelper.ConnectionString = Configuration["ConnectionStringDevelopment"];
             }
 
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;

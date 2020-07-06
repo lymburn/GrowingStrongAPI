@@ -21,17 +21,14 @@ namespace GrowingStrongAPI.Controllers
     {
         private IUserService _userService;
         private IMapper _mapper;
-        private readonly AppSettings _appSettings;
         private readonly ILogger _logger;
 
         public UserController(IUserService userService,
                               IMapper mapper,
-                              IOptions<AppSettings> appSettings,
                               ILogger<UserController> logger)
         {
             _mapper = mapper;
             _userService = userService;
-            _appSettings = appSettings.Value;
             _logger = logger;
         }
 
@@ -46,7 +43,7 @@ namespace GrowingStrongAPI.Controllers
                 return BadRequest("Invalid username or password");
             }
 
-            string tokenString = JwtHelper.GenerateJWT(user.Id, _appSettings.JWTSecret);
+            string tokenString = JwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
 
             if (string.IsNullOrEmpty(tokenString))
             {
@@ -55,7 +52,6 @@ namespace GrowingStrongAPI.Controllers
 
             return Ok(new
             {
-                user,
                 Token = tokenString
             });
         }

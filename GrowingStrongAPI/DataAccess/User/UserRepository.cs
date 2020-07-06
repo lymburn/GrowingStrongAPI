@@ -24,7 +24,7 @@ namespace GrowingStrongAPI.DataAccess
 
         public IEnumerable<User> GetAll()
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"SELECT * FROM {UserSchema.Table}";
 
@@ -38,7 +38,7 @@ namespace GrowingStrongAPI.DataAccess
 
         public User GetById(int id)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 //string sql = $@"SELECT * FROM {UserSchema.Table}
                 //                WHERE {UserSchema.Columns.Id} = {id}";
@@ -55,7 +55,7 @@ namespace GrowingStrongAPI.DataAccess
 
         public User GetByEmailAddress(string emailAddress)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"SELECT * FROM {UserSchema.Table}
                                 WHERE {UserSchema.Columns.EmailAddress} = '{emailAddress}'";
@@ -70,7 +70,7 @@ namespace GrowingStrongAPI.DataAccess
 
         public void Create(User user)
         {
-            using (var connection = _dbConnectionFactory.CreateConnection(ConnectionHelper.ConnectionString))
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
                                 VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)";
