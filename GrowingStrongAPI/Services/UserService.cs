@@ -5,6 +5,7 @@ using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 
@@ -16,47 +17,72 @@ namespace GrowingStrongAPI.Services
         private IMapper _mapper;
         private readonly ILogger _logger;
         private IAuthenticationHelper _authenticationHelper;
+        private IJwtHelper _jwtHelper;
 
         public UserService(IUserRepository userRepository,
                            IMapper mapper,
                            ILogger<IUserService> logger,
-                           IAuthenticationHelper authenticationHelper)
+                           IAuthenticationHelper authenticationHelper,
+                           IJwtHelper jwtHelper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
             _authenticationHelper = authenticationHelper;
+            _jwtHelper = jwtHelper;
         }
 
-        public UserDto Authenticate(string emailAddress, string password)
+        public AuthenticateUserResponse Authenticate(string emailAddress, string password)
         {
+            AuthenticateUserResponse response = new AuthenticateUserResponse();
+            response.ResponseStatus.SetOk();
+
             _logger.LogInformation($"Authenticating user with email: {emailAddress}");
 
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(password))
             {
-                _logger.LogError("Email address or password is null/empty");
-                return null;
+                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                return response;
             }
-                
+            
             User user = _userRepository.GetByEmailAddress(emailAddress);
 
             if (user is null)
             {
-                _logger.LogError($"Failed to retrieve user with email address: {emailAddress}");
-                return null;
+                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                return response;
             }
 
-            if (!_authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            try
             {
-                _logger.LogError("Failed to verify user password");
-                return null;
+                bool passwordCorrect = _authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt);
+
+                if (!passwordCorrect)
+                {
+                    response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                    return response;
+                }
+            }
+            catch (Exception e)
+            {
+                response.ResponseStatus.SetError(e.ToString());
+                return response;
+            }
+
+            string tokenString = _jwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
+
+            if (string.IsNullOrEmpty(tokenString))
+            {
+                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.FailedToGenerateJWT);
+                return response;
             }
 
             _logger.LogInformation("Successfully authenticated user");
 
-            UserDto userDto = _mapper.Map<UserDto>(user);
+            response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
+            response.Token = tokenString;
 
-            return userDto;
+            return response;
         }
 
         public IEnumerable<User> GetAll()

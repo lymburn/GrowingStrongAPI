@@ -6,9 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GrowingStrongAPI.Helpers
 {
-    public static class JwtHelper
+    public class JwtHelper: IJwtHelper
     {
-        public static string GenerateJWT(int userId, string secret)
+        public string GenerateJWT(int userId, string secret)
         {
             //Create JWT token
             var tokenHandler = new JwtSecurityTokenHandler();

@@ -19,6 +19,7 @@ namespace GrowingStrongAPI.Tests
         Mock<IAuthenticationHelper> mockAuthenticationHelper;
         Mock<ILogger<IUserService>> mockLogger;
         Mock<IMapper> mockMapper;
+        Mock<IJwtHelper> mockJwtHelper;
 
         [TestInitialize]
         public void TestInitialize()
@@ -27,11 +28,13 @@ namespace GrowingStrongAPI.Tests
             mockAuthenticationHelper = new Mock<IAuthenticationHelper>();
             mockLogger = new Mock<ILogger<IUserService>>();
             mockMapper = new Mock<IMapper>();
+            mockJwtHelper = new Mock<IJwtHelper>();
 
             userService = new UserService(mockUserRepository.Object,
                                           mockMapper.Object,
                                           mockLogger.Object,
-                                          mockAuthenticationHelper.Object);
+                                          mockAuthenticationHelper.Object,
+                                          mockJwtHelper.Object);
         }
 
         [TestMethod]
@@ -40,22 +43,25 @@ namespace GrowingStrongAPI.Tests
             string email = "";
             string password = "Password1";
 
-            UserDto userDto = userService.Authenticate(email, password);
-            Assert.IsNull(userDto);
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             email = null;
-            userDto = userService.Authenticate(email, password);
-            Assert.IsNull(userDto);
+            response = userService.Authenticate(email, password);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             email = "test123@gmail.com";
             password = "";
-
-            userDto = userService.Authenticate(email, password);
-            Assert.IsNull(userDto);
+            response = userService.Authenticate(email, password);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             password = null;
-            userDto = userService.Authenticate(email, password);
-            Assert.IsNull(userDto);
+            response = userService.Authenticate(email, password);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
         [TestMethod]
@@ -67,13 +73,15 @@ namespace GrowingStrongAPI.Tests
             userService = new UserService(mockUserRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
-                                                           mockAuthenticationHelper.Object);
+                                                           mockAuthenticationHelper.Object,
+                                                           mockJwtHelper.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
-            UserDto userDto = userService.Authenticate(email, password);
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.IsNull(userDto);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
         [TestMethod]
@@ -91,13 +99,15 @@ namespace GrowingStrongAPI.Tests
             userService = new UserService(mockUserRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
-                                                           mockAuthenticationHelper.Object);
+                                                           mockAuthenticationHelper.Object,
+                                                           mockJwtHelper.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
-            UserDto userDto = userService.Authenticate(email, password);
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.IsNull(userDto);
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
         [TestMethod]
@@ -120,16 +130,19 @@ namespace GrowingStrongAPI.Tests
 
             mockMapper.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns(expectedUserDto);
 
+            mockJwtHelper.Setup(m => m.GenerateJWT(It.IsAny<int>(), It.IsAny<string>())).Returns("Token");
+
             userService = new UserService(mockUserRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
-                                                           mockAuthenticationHelper.Object);
+                                                           mockAuthenticationHelper.Object,
+                                                           mockJwtHelper.Object);
 
 
-            UserDto userDto = userService.Authenticate(email, password);
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.IsNotNull(userDto);
-            Assert.AreEqual(expectedUserDto.EmailAddress, userDto.EmailAddress);
+            Assert.AreEqual(response.ResponseStatus.Status, 0);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.Success);
         }
     }
 }

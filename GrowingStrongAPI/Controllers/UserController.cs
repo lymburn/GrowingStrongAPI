@@ -36,24 +36,23 @@ namespace GrowingStrongAPI.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateModel authenticateModel)
         {
-            UserDto user = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
+            AuthenticateUserResponse response = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
 
-            if (user is null)
+            if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.InvalidCredentials))
             {
-                return BadRequest("Invalid username or password");
+                return Unauthorized(Constants.AuthenticateUserMessages.InvalidCredentials);
             }
-
-            string tokenString = JwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
-
-            if (string.IsNullOrEmpty(tokenString))
+            else if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.FailedToGenerateJWT))
             {
-                return StatusCode(500, "Unable to generate JWT string");
+                return StatusCode(500,Constants.AuthenticateUserMessages.FailedToGenerateJWT);
             }
-
-            return Ok(new
+            else
             {
-                Token = tokenString
-            });
+                return Ok(new
+                {
+                    response.Token
+                });
+            }
         }
 
         [HttpGet]
