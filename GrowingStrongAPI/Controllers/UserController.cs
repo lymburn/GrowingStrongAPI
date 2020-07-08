@@ -11,7 +11,7 @@ using Dapper;
 using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Services;
-using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Helpers.Extensions;
 
 namespace GrowingStrongAPI.Controllers
 {
@@ -38,14 +38,13 @@ namespace GrowingStrongAPI.Controllers
         {
             AuthenticateUserResponse response = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
 
-            if (response.ResponseStatus.Status == ResponseStatusCode.OK)
+            if (!response.ResponseStatus.HasError())
             {
                 return Ok(new
                 {
                     response.Token
                 });
             }
-            else
 
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
@@ -72,17 +71,25 @@ namespace GrowingStrongAPI.Controllers
         {
             User user = _mapper.Map<User>(registrationModel);
 
-            CreateUserResponse response = _userService.Create(user, registrationModel.Password);
+            CreateUserResponse createResponse = _userService.Create(user, registrationModel.Password);
 
-            if (response.ResponseStatus.Status == ResponseStatusCode.OK)
+            if (createResponse.ResponseStatus.HasError())
             {
-                return Ok(new
-                {
-                    User = response.userDto
-                });
+                return StatusCode(createResponse.ResponseStatus.Status, createResponse.ResponseStatus.Message);
             }
 
-            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+            AuthenticateUserResponse authenticateResponse = _userService.Authenticate(user.EmailAddress, registrationModel.Password);
+
+            if (authenticateResponse.ResponseStatus.HasError())
+            {
+                return StatusCode(authenticateResponse.ResponseStatus.Status, authenticateResponse.ResponseStatus.Message);
+            }
+
+            return Ok(new
+            {
+                User = createResponse.userDto,
+                authenticateResponse.Token
+            });
         }
     }
 }

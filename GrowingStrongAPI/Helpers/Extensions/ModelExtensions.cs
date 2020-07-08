@@ -21,5 +21,10 @@ namespace GrowingStrongAPI.Helpers.Extensions
             responseStatus.SetOk();
             responseStatus.Message = message;
         }
+
+        public static bool HasError(this ResponseStatus responseStatus)
+        {
+            return responseStatus.Status != ResponseStatusCode.OK;
+        }
     }
 }
