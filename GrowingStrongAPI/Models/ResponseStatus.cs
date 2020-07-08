@@ -10,7 +10,7 @@ namespace GrowingStrongAPI.Models
         public ResponseStatus()
         {
             Message = string.Empty;
-            Status = ResponseStatusCode.S_ERROR;
+            Status = ResponseStatusCode.INTERNAL_SERVER_ERROR;
         }
     }
 }

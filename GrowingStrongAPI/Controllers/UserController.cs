@@ -38,25 +38,16 @@ namespace GrowingStrongAPI.Controllers
         {
             AuthenticateUserResponse response = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
 
-            if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.InvalidCredentials))
-            {
-                return Unauthorized(Constants.AuthenticateUserMessages.InvalidCredentials);
-            }
-            else if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.FailedToGenerateJWT))
-            {
-                return StatusCode(500,Constants.AuthenticateUserMessages.FailedToGenerateJWT);
-            }
-            else if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength))
-            {
-                return StatusCode(500, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
-            }
-            else
+            if (response.ResponseStatus.Status == ResponseStatusCode.OK)
             {
                 return Ok(new
                 {
                     response.Token
                 });
             }
+            else
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [HttpGet]
@@ -83,29 +74,15 @@ namespace GrowingStrongAPI.Controllers
 
             CreateUserResponse response = _userService.Create(user, registrationModel.Password);
 
-            if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.NullOrEmptyCredentials))
-            {
-                return BadRequest(Constants.CreateUserMessages.NullOrEmptyCredentials);
-            }
-            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.UserAlreadyExists))
-            {
-                return StatusCode(409, Constants.CreateUserMessages.UserAlreadyExists);
-            }
-            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.FailedToCreatePasswordHash))
-            {
-                return StatusCode(500, Constants.CreateUserMessages.FailedToCreatePasswordHash);
-            }
-            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.FailedToCreateUser))
-            {
-                return StatusCode(500, Constants.CreateUserMessages.FailedToCreateUser);
-            }
-            else
+            if (response.ResponseStatus.Status == ResponseStatusCode.OK)
             {
                 return Ok(new
                 {
                     User = response.userDto
                 });
-            } 
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
     }
 }

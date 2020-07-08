@@ -5,16 +5,15 @@ namespace GrowingStrongAPI.Helpers.Extensions
 {
     public static class ModelExtensions
     {
-        public static void SetError(this ResponseStatus responseStatus, string errorMessage)
+        public static void SetError(this ResponseStatus responseStatus, int statusCode, string errorMessage)
         {
-            responseStatus.Status = ResponseStatusCode.S_ERROR;
+            responseStatus.Status = statusCode;
             responseStatus.Message = errorMessage;
         }
 
         public static void SetOk(this ResponseStatus responseStatus)
         {
-            responseStatus.Status = ResponseStatusCode.S_OK;
-            responseStatus.Message = "OK";
+            responseStatus.Status = ResponseStatusCode.OK;
         }
 
         public static void SetOk(this ResponseStatus responseStatus, string message)

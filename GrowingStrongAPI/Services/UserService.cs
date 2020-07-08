@@ -35,13 +35,13 @@ namespace GrowingStrongAPI.Services
         public AuthenticateUserResponse Authenticate(string emailAddress, string password)
         {
             AuthenticateUserResponse response = new AuthenticateUserResponse();
-            response.ResponseStatus.SetOk();
 
             _logger.LogInformation($"Authenticating user with email: {emailAddress}");
 
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(password))
             {
-                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
+                                                 Constants.AuthenticateUserMessages.InvalidCredentials);
                 return response;
             }
             
@@ -49,7 +49,8 @@ namespace GrowingStrongAPI.Services
 
             if (user is null)
             {
-                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                response.ResponseStatus.SetError(ResponseStatusCode.UNAUTHORIZED,
+                                                 Constants.AuthenticateUserMessages.InvalidCredentials);
                 return response;
             }
 
@@ -59,13 +60,15 @@ namespace GrowingStrongAPI.Services
 
                 if (!passwordCorrect)
                 {
-                    response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidCredentials);
+                    response.ResponseStatus.SetError(ResponseStatusCode.UNAUTHORIZED,
+                                                     Constants.AuthenticateUserMessages.InvalidCredentials);
                     return response;
                 }
             }
             catch (Exception)
             {
-                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
                 return response;
             }
 
@@ -73,7 +76,8 @@ namespace GrowingStrongAPI.Services
 
             if (string.IsNullOrEmpty(tokenString))
             {
-                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.FailedToGenerateJWT);
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.AuthenticateUserMessages.FailedToGenerateJWT);
                 return response;
             }
 
@@ -105,17 +109,18 @@ namespace GrowingStrongAPI.Services
         public CreateUserResponse Create(User user, string password)
         {
             CreateUserResponse response = new CreateUserResponse();
-            response.ResponseStatus.SetOk();
 
             if (string.IsNullOrEmpty(user.EmailAddress) || string.IsNullOrEmpty(password))
             {
-                response.ResponseStatus.SetError(Constants.CreateUserMessages.NullOrEmptyCredentials);
+                response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
+                                                 Constants.CreateUserMessages.NullOrEmptyCredentials);
                 return response;
             }
 
             if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
             {
-                response.ResponseStatus.SetError(Constants.CreateUserMessages.UserAlreadyExists);
+                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                                                 Constants.CreateUserMessages.UserAlreadyExists);
                 return response;
             }
 
@@ -129,7 +134,8 @@ namespace GrowingStrongAPI.Services
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                response.ResponseStatus.SetError(Constants.CreateUserMessages.FailedToCreatePasswordHash);
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateUserMessages.FailedToCreatePasswordHash);
                 return response;
             }
 
@@ -147,7 +153,8 @@ namespace GrowingStrongAPI.Services
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                response.ResponseStatus.SetError(Constants.CreateUserMessages.FailedToCreateUser);
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateUserMessages.FailedToCreateUser);
             }
             
             return response;
