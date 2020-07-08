@@ -46,6 +46,10 @@ namespace GrowingStrongAPI.Controllers
             {
                 return StatusCode(500,Constants.AuthenticateUserMessages.FailedToGenerateJWT);
             }
+            else if (response.ResponseStatus.Message.Equals(Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength))
+            {
+                return StatusCode(500, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+            }
             else
             {
                 return Ok(new

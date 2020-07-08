@@ -25,24 +25,19 @@ namespace GrowingStrongAPI.Helpers
 
         public bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
-            if (password is null)
+            if (password is null || string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentNullException("password");
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password value cannot be empty or whitespace only");
+                return false;
             }
 
             if (storedHash.Length != 64)
             {
-                throw new ArgumentException("Invalid length of password hash (64 bytes expected).");
+                throw new ArgumentException(Constants.AuthenticationHelperExceptions.InvalidPasswordHashLength);
             }
 
             if (storedSalt.Length != 128)
             {
-                throw new ArgumentException("Invalid length of password salt (128 bytes expected).");
+                throw new ArgumentException(Constants.AuthenticationHelperExceptions.InvalidPasswordSaltLength);
             }
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))

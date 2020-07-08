@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AutoMapper;
 using System.Collections.Generic;
+using System;
 
 namespace GrowingStrongAPI.Tests
 {
@@ -108,6 +109,60 @@ namespace GrowingStrongAPI.Tests
 
             Assert.AreEqual(response.ResponseStatus.Status, -1);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
+        }
+
+        [TestMethod]
+        public void TestAuthenticateInvalidPasswordHashLength()
+        {
+            User user = new User();
+            mockUserRepository.Setup(u => u.GetByEmailAddress(It.IsAny<string>()))
+                              .Returns(user);
+
+            ArgumentException exception = new ArgumentException(Constants.AuthenticationHelperExceptions.InvalidPasswordHashLength);
+            mockAuthenticationHelper.Setup(a => a.VerifyPasswordHash(It.IsAny<string>(),
+                                                                     It.IsAny<byte[]>(),
+                                                                     It.IsAny<byte[]>()))
+                                                                    .Throws(exception);
+
+            userService = new UserService(mockUserRepository.Object,
+                                                           mockMapper.Object,
+                                                           mockLogger.Object,
+                                                           mockAuthenticationHelper.Object,
+                                                           mockJwtHelper.Object);
+
+            string email = "test123@gmail.com";
+            string password = "Password1";
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
+
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+        }
+
+        [TestMethod]
+        public void TestAuthenticateInvalidPasswordSaltLength()
+        {
+            User user = new User();
+            mockUserRepository.Setup(u => u.GetByEmailAddress(It.IsAny<string>()))
+                              .Returns(user);
+
+            ArgumentException exception = new ArgumentException(Constants.AuthenticationHelperExceptions.InvalidPasswordSaltLength);
+            mockAuthenticationHelper.Setup(a => a.VerifyPasswordHash(It.IsAny<string>(),
+                                                                     It.IsAny<byte[]>(),
+                                                                     It.IsAny<byte[]>()))
+                                                                    .Throws(exception);
+
+            userService = new UserService(mockUserRepository.Object,
+                                                           mockMapper.Object,
+                                                           mockLogger.Object,
+                                                           mockAuthenticationHelper.Object,
+                                                           mockJwtHelper.Object);
+
+            string email = "test123@gmail.com";
+            string password = "Password1";
+            AuthenticateUserResponse response = userService.Authenticate(email, password);
+
+            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
         }
 
         [TestMethod]

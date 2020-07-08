@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Models.Users;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
@@ -63,9 +64,9 @@ namespace GrowingStrongAPI.Services
                     return response;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                response.ResponseStatus.SetError(e.ToString());
+                response.ResponseStatus.SetError(Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
                 return response;
             }
 
@@ -104,6 +105,9 @@ namespace GrowingStrongAPI.Services
 
         public void Create(User user, string password)
         {
+            CreateUserResponse response = new CreateUserResponse();
+            response.ResponseStatus.SetOk();
+
             try
             {
                 if (string.IsNullOrWhiteSpace(password))

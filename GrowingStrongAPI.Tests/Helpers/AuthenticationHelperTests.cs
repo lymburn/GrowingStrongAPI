@@ -25,15 +25,6 @@ namespace GrowingStrongAPI.Tests.Helpers
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestCreatePasswordHashEmptyPassword()
-        {
-            byte[] passwordHash, passwordSalt;
-            string emptyPassword = "";
-            authenticationHelper.CreatePasswordHash(emptyPassword, out passwordHash, out passwordSalt);
-        }
-
-        [TestMethod]
         public void TestCreatePasswordHashSuccessful()
         {
             byte[] passwordHash, passwordSalt;
@@ -45,23 +36,18 @@ namespace GrowingStrongAPI.Tests.Helpers
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestVerifyPasswordHashNullPassword()
+        public void TestVerifyPasswordHashNullOrEmptyPassword()
         {
             byte[] passwordHash = new byte[0];
             byte[] passwordSalt = new byte[0];
             string nullPassword = null;
-            authenticationHelper.VerifyPasswordHash(nullPassword, passwordHash, passwordSalt);
-        }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestVerifyPasswordHashEmptyPassword()
-        {
-            byte[] passwordHash = new byte[0];
-            byte[] passwordSalt = new byte[0];
+            var result = authenticationHelper.VerifyPasswordHash(nullPassword, passwordHash, passwordSalt);
+            Assert.IsFalse(result);
+
             string emptyPassword = "";
-            authenticationHelper.VerifyPasswordHash(emptyPassword, passwordHash, passwordSalt);
+            result = authenticationHelper.VerifyPasswordHash(emptyPassword, passwordHash, passwordSalt);
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
