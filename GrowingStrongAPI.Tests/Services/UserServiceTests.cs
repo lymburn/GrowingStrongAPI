@@ -45,23 +45,23 @@ namespace GrowingStrongAPI.Tests
             string password = "Password1";
 
             AuthenticateUserResponse response = userService.Authenticate(email, password);
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.BAD_REQUEST);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             email = null;
             response = userService.Authenticate(email, password);
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.BAD_REQUEST);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             email = "test123@gmail.com";
             password = "";
             response = userService.Authenticate(email, password);
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.BAD_REQUEST);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
 
             password = null;
             response = userService.Authenticate(email, password);
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.BAD_REQUEST);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
@@ -81,7 +81,7 @@ namespace GrowingStrongAPI.Tests
             string password = "Password1";
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.UNAUTHORIZED);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
@@ -107,7 +107,7 @@ namespace GrowingStrongAPI.Tests
             string password = "Password1";
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.UNAUTHORIZED);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidCredentials);
         }
 
@@ -134,7 +134,7 @@ namespace GrowingStrongAPI.Tests
             string password = "Password1";
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.INTERNAL_SERVER_ERROR);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
         }
 
@@ -161,7 +161,7 @@ namespace GrowingStrongAPI.Tests
             string password = "Password1";
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.AreEqual(response.ResponseStatus.Status, -1);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.INTERNAL_SERVER_ERROR);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
         }
 
@@ -196,7 +196,7 @@ namespace GrowingStrongAPI.Tests
 
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
-            Assert.AreEqual(response.ResponseStatus.Status, 0);
+            Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.OK);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.Success);
         }
     }

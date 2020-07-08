@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Helpers\Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GrowingStrongAPI\GrowingStrongAPI.csproj" />
