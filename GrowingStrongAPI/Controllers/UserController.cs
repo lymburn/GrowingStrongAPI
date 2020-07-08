@@ -81,9 +81,31 @@ namespace GrowingStrongAPI.Controllers
         {
             User user = _mapper.Map<User>(registrationModel);
 
-            _userService.Create(user, registrationModel.Password);
+            CreateUserResponse response = _userService.Create(user, registrationModel.Password);
 
-            return Ok();  
+            if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.NullOrEmptyCredentials))
+            {
+                return BadRequest(Constants.CreateUserMessages.NullOrEmptyCredentials);
+            }
+            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.UserAlreadyExists))
+            {
+                return StatusCode(409, Constants.CreateUserMessages.UserAlreadyExists);
+            }
+            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.FailedToCreatePasswordHash))
+            {
+                return StatusCode(500, Constants.CreateUserMessages.FailedToCreatePasswordHash);
+            }
+            else if (response.ResponseStatus.Message.Equals(Constants.CreateUserMessages.FailedToCreateUser))
+            {
+                return StatusCode(500, Constants.CreateUserMessages.FailedToCreateUser);
+            }
+            else
+            {
+                return Ok(new
+                {
+                    User = response.userDto
+                });
+            } 
         }
     }
 }

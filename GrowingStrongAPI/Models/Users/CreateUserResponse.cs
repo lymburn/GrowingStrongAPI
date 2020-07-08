@@ -1,5 +1,5 @@
 ﻿using System;
-namespace GrowingStrongAPI.Models.Users
+namespace GrowingStrongAPI.Models
 {
     public class CreateUserResponse: BaseResponse
     {

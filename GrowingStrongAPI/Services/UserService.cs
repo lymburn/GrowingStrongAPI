@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
-using GrowingStrongAPI.Models.Users;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
@@ -103,39 +102,55 @@ namespace GrowingStrongAPI.Services
             return userDto;
         }
 
-        public void Create(User user, string password)
+        public CreateUserResponse Create(User user, string password)
         {
             CreateUserResponse response = new CreateUserResponse();
             response.ResponseStatus.SetOk();
 
+            if (string.IsNullOrEmpty(user.EmailAddress) || string.IsNullOrEmpty(password))
+            {
+                response.ResponseStatus.SetError(Constants.CreateUserMessages.NullOrEmptyCredentials);
+                return response;
+            }
+
+            if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
+            {
+                response.ResponseStatus.SetError(Constants.CreateUserMessages.UserAlreadyExists);
+                return response;
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    throw new ArgumentException("Password cannot be null or empty");
-                }
-
-                if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
-                {
-                    _logger.LogInformation("Email address already exists");
-                    return;
-                }
-
                 byte[] passwordHash, passwordSalt;
-
                 _authenticationHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
                 user.PasswordHash = passwordHash;
-
                 user.PasswordSalt = passwordSalt;
-
-                _userRepository.Create(user);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
+                response.ResponseStatus.SetError(Constants.CreateUserMessages.FailedToCreatePasswordHash);
+                return response;
             }
 
+            try
+            {
+                int userId = _userRepository.Create(user);
+                user.setId(userId);
+
+                _logger.LogInformation("Successfully created user");
+
+                UserDto userDto = _mapper.Map<UserDto>(user);
+                response.ResponseStatus.SetOk(Constants.CreateUserMessages.Success);
+                response.userDto = userDto;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+                response.ResponseStatus.SetError(Constants.CreateUserMessages.FailedToCreateUser);
+            }
+            
+            return response;
         }
     }
 }

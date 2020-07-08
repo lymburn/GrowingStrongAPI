@@ -10,6 +10,6 @@ namespace GrowingStrongAPI.Services
         AuthenticateUserResponse Authenticate(string emailAddress, string password);
         IEnumerable<User> GetAll();
         UserDto GetById(int id);
-        void Create(User user, string password);
+        CreateUserResponse Create(User user, string password);
     }
 }

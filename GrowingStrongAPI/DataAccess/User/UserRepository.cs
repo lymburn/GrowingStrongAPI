@@ -68,34 +68,47 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public void Create(User user)
+        public int Create(User user)
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
-                string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
-                                VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)";
+                //string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
+                //                VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)
+                //                RETURNING ID";
+                int id;
 
-                NpgsqlCommand command = new NpgsqlCommand(sql, connection);
+                try
+                {
+                    string sql = $@"select * from create_user_account(@EmailAddress, @PasswordHash, @PasswordSalt)";
 
-                NpgsqlParameter emailParam = new NpgsqlParameter("@EmailAddress", NpgsqlTypes.NpgsqlDbType.Varchar);
+                    NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
-                NpgsqlParameter passwordHashParam = new NpgsqlParameter("@PasswordHash", NpgsqlTypes.NpgsqlDbType.Bytea);
+                    NpgsqlParameter emailParam = new NpgsqlParameter("@EmailAddress", NpgsqlTypes.NpgsqlDbType.Varchar);
 
-                NpgsqlParameter passwordSaltParam = new NpgsqlParameter("@PasswordSalt", NpgsqlTypes.NpgsqlDbType.Bytea);
+                    NpgsqlParameter passwordHashParam = new NpgsqlParameter("@PasswordHash", NpgsqlTypes.NpgsqlDbType.Bytea);
 
-                emailParam.Value = user.EmailAddress;
+                    NpgsqlParameter passwordSaltParam = new NpgsqlParameter("@PasswordSalt", NpgsqlTypes.NpgsqlDbType.Bytea);
 
-                passwordHashParam.Value = user.PasswordHash;
+                    emailParam.Value = user.EmailAddress;
 
-                passwordSaltParam.Value = user.PasswordSalt;
+                    passwordHashParam.Value = user.PasswordHash;
 
-                NpgsqlParameter[] parameters = new NpgsqlParameter[] { emailParam, passwordHashParam, passwordSaltParam };
+                    passwordSaltParam.Value = user.PasswordSalt;
 
-                command.Parameters.AddRange(parameters);
+                    NpgsqlParameter[] parameters = new NpgsqlParameter[] { emailParam, passwordHashParam, passwordSaltParam, };
 
-                connection.Open();
+                    command.Parameters.AddRange(parameters);
 
-                command.ExecuteNonQuery();
+                    connection.Open();
+
+                    id = Int32.Parse(command.ExecuteScalar().ToString());
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+
+                return id;
             }
         }
     }

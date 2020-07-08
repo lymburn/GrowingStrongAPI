@@ -5,21 +5,18 @@ namespace GrowingStrongAPI.Helpers
     {
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            if (password is null)
+            try
             {
-                throw new ArgumentNullException("password");
+                using (var hmac = new System.Security.Cryptography.HMACSHA512())
+                {
+                    passwordSalt = hmac.Key;
+
+                    passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                }
             }
-
-            if (string.IsNullOrWhiteSpace(password))
+            catch (Exception e)
             {
-                throw new ArgumentException("Password value cannot be empty or whitespace only");
-            }
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                throw e;
             }
         }
 
