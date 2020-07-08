@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Helpers;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 
@@ -14,14 +15,17 @@ namespace GrowingStrongAPI.Services
         private IUserRepository _userRepository;
         private IMapper _mapper;
         private readonly ILogger _logger;
+        private IAuthenticationHelper _authenticationHelper;
 
         public UserService(IUserRepository userRepository,
                            IMapper mapper,
-                           ILogger<IUserService> logger)
+                           ILogger<IUserService> logger,
+                           IAuthenticationHelper authenticationHelper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
+            _authenticationHelper = authenticationHelper;
         }
 
         public UserDto Authenticate(string emailAddress, string password)
@@ -38,7 +42,7 @@ namespace GrowingStrongAPI.Services
                 return null;
             }
 
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!_authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
             {
                 return null;
             }
@@ -63,84 +67,34 @@ namespace GrowingStrongAPI.Services
 
         public void Create(User user, string password)
         {
-            if (string.IsNullOrWhiteSpace(password))
+            try
             {
-                throw new ArgumentException("Password cannot be null or empty");
-            }
-
-            if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
-            {
-                Console.WriteLine("Email address already exists");
-                return;
-            }
-
-            byte[] passwordHash, passwordSalt;
-
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-            user.PasswordHash = passwordHash;
-
-            user.PasswordSalt = passwordSalt;
-
-            _userRepository.Create(user);
-        }
-
-        //Helpers
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            if (password is null)
-            {
-                throw new ArgumentNullException("password");
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password value cannot be empty or whitesapce only");
-            }
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            if (password is null)
-            {
-                throw new ArgumentNullException("password");
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password value cannot be empty or whitesapce only");
-            }
-
-            if (storedHash.Length != 64)
-            {
-                throw new ArgumentException("Invalid length of password hash (64 bytes expected).");
-            }
-
-            if (storedSalt.Length != 128)
-            {
-                throw new ArgumentException("Invalid length of password salt (128 bytes expected).");
-            }
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
+                if (string.IsNullOrWhiteSpace(password))
                 {
-                    if (computedHash[i] != storedHash[i])
-                    {
-                        return false;
-                    }
+                    throw new ArgumentException("Password cannot be null or empty");
                 }
+
+                if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
+                {
+                    _logger.LogInformation("Email address already exists");
+                    return;
+                }
+
+                byte[] passwordHash, passwordSalt;
+
+                _authenticationHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+                user.PasswordHash = passwordHash;
+
+                user.PasswordSalt = passwordSalt;
+
+                _userRepository.Create(user);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
             }
 
-            return true;
         }
     }
 }

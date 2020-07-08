@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowingStrongAPI", "GrowingStrongAPI\GrowingStrongAPI.csproj", "{8433BA79-063D-4F23-A91D-CD7E585DBD0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrowingStrongAPI.Tests", "GrowingStrongAPI.Tests\GrowingStrongAPI.Tests.csproj", "{E472AE46-31D0-4D39-8F88-DC0F154026EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,5 +15,9 @@ Global
 		{8433BA79-063D-4F23-A91D-CD7E585DBD0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8433BA79-063D-4F23-A91D-CD7E585DBD0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8433BA79-063D-4F23-A91D-CD7E585DBD0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E472AE46-31D0-4D39-8F88-DC0F154026EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E472AE46-31D0-4D39-8F88-DC0F154026EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E472AE46-31D0-4D39-8F88-DC0F154026EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E472AE46-31D0-4D39-8F88-DC0F154026EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
