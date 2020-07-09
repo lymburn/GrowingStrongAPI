@@ -11,7 +11,7 @@ using Dapper;
 using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.Services;
-using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Helpers.Extensions;
 
 namespace GrowingStrongAPI.Controllers
 {
@@ -36,24 +36,18 @@ namespace GrowingStrongAPI.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticateModel authenticateModel)
         {
-            UserDto user = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
+            AuthenticateUserResponse response = _userService.Authenticate(authenticateModel.EmailAddress, authenticateModel.Password);
 
-            if (user is null)
+            if (!response.ResponseStatus.HasError())
             {
-                return BadRequest("Invalid username or password");
+                return Ok(new
+                {
+                    User = response.UserDto,
+                    response.Token
+                });
             }
 
-            string tokenString = JwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
-
-            if (string.IsNullOrEmpty(tokenString))
-            {
-                return StatusCode(500, "Unable to generate JWT string");
-            }
-
-            return Ok(new
-            {
-                Token = tokenString
-            });
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [HttpGet]
@@ -78,9 +72,25 @@ namespace GrowingStrongAPI.Controllers
         {
             User user = _mapper.Map<User>(registrationModel);
 
-            _userService.Create(user, registrationModel.Password);
+            CreateUserResponse createResponse = _userService.Create(user, registrationModel.Password);
 
-            return Ok();  
+            if (createResponse.ResponseStatus.HasError())
+            {
+                return StatusCode(createResponse.ResponseStatus.Status, createResponse.ResponseStatus.Message);
+            }
+
+            AuthenticateUserResponse authenticateResponse = _userService.Authenticate(user.EmailAddress, registrationModel.Password);
+
+            if (authenticateResponse.ResponseStatus.HasError())
+            {
+                return StatusCode(authenticateResponse.ResponseStatus.Status, authenticateResponse.ResponseStatus.Message);
+            }
+
+            return Ok(new
+            {
+                User = createResponse.userDto,
+                authenticateResponse.Token
+            });
         }
     }
 }

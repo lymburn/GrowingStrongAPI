@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
+using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 
@@ -14,133 +16,151 @@ namespace GrowingStrongAPI.Services
         private IUserRepository _userRepository;
         private IMapper _mapper;
         private readonly ILogger _logger;
+        private IAuthenticationHelper _authenticationHelper;
+        private IJwtHelper _jwtHelper;
 
         public UserService(IUserRepository userRepository,
                            IMapper mapper,
-                           ILogger<IUserService> logger)
+                           ILogger<IUserService> logger,
+                           IAuthenticationHelper authenticationHelper,
+                           IJwtHelper jwtHelper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _logger = logger;
+            _authenticationHelper = authenticationHelper;
+            _jwtHelper = jwtHelper;
         }
 
-        public UserDto Authenticate(string emailAddress, string password)
+        public AuthenticateUserResponse Authenticate(string emailAddress, string password)
         {
+            AuthenticateUserResponse response = new AuthenticateUserResponse();
+
+            _logger.LogInformation($"Authenticating user with email: {emailAddress}");
+
             if (string.IsNullOrEmpty(emailAddress) || string.IsNullOrEmpty(password))
             {
-                return null;
+                response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
+                                                 Constants.AuthenticateUserMessages.InvalidCredentials);
+                return response;
             }
-                
+            
             User user = _userRepository.GetByEmailAddress(emailAddress);
 
             if (user is null)
             {
-                return null;
+                response.ResponseStatus.SetError(ResponseStatusCode.UNAUTHORIZED,
+                                                 Constants.AuthenticateUserMessages.InvalidCredentials);
+                return response;
             }
 
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            try
             {
-                return null;
+                bool passwordIsCorrect = _authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt);
+
+                if (!passwordIsCorrect)
+                {
+                    response.ResponseStatus.SetError(ResponseStatusCode.UNAUTHORIZED,
+                                                     Constants.AuthenticateUserMessages.InvalidCredentials);
+                    return response;
+                }
             }
+            catch (Exception)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+                return response;
+            }
+
+            string tokenString = _jwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
+
+            if (string.IsNullOrEmpty(tokenString))
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.AuthenticateUserMessages.FailedToGenerateJWT);
+                return response;
+            }
+
+            _logger.LogInformation("Successfully authenticated user");
+
 
             UserDto userDto = _mapper.Map<UserDto>(user);
+            response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
+            response.UserDto = userDto;
+            response.Token = tokenString;
 
-            return userDto;
+            return response;
         }
 
         public IEnumerable<User> GetAll()
         {
+            _logger.LogInformation("Getting all users");
+
             return _userRepository.GetAll();
         }
 
         public UserDto GetById(int id)
         {
+            _logger.LogInformation($"Getting user by id: {id}");
+
             User user = _userRepository.GetById(id);
             UserDto userDto = _mapper.Map<UserDto>(user);
 
             return userDto;
         }
 
-        public void Create(User user, string password)
+        public CreateUserResponse Create(User user, string password)
         {
-            if (string.IsNullOrWhiteSpace(password))
+            CreateUserResponse response = new CreateUserResponse();
+
+            if (string.IsNullOrEmpty(user.EmailAddress) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("Password cannot be null or empty");
+                response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
+                                                 Constants.CreateUserMessages.NullOrEmptyCredentials);
+                return response;
             }
 
             if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
             {
-                Console.WriteLine("Email address already exists");
-                return;
+                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                                                 Constants.CreateUserMessages.UserAlreadyExists);
+                return response;
             }
 
-            byte[] passwordHash, passwordSalt;
-
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-            user.PasswordHash = passwordHash;
-
-            user.PasswordSalt = passwordSalt;
-
-            _userRepository.Create(user);
-        }
-
-        //Helpers
-        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            if (password is null)
+            try
             {
-                throw new ArgumentNullException("password");
+                byte[] passwordHash, passwordSalt;
+                _authenticationHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
             }
-
-            if (string.IsNullOrWhiteSpace(password))
+            catch (Exception e)
             {
-                throw new ArgumentException("Password value cannot be empty or whitesapce only");
+                _logger.LogError(e.ToString());
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateUserMessages.FailedToCreatePasswordHash);
+                return response;
             }
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            try
             {
-                passwordSalt = hmac.Key;
+                int userId = _userRepository.Create(user);
+                user.setId(userId);
 
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                _logger.LogInformation("Successfully created user");
+
+                UserDto userDto = _mapper.Map<UserDto>(user);
+                response.ResponseStatus.SetOk(Constants.CreateUserMessages.Success);
+                response.userDto = userDto;
             }
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            if (password is null)
+            catch (Exception e)
             {
-                throw new ArgumentNullException("password");
+                _logger.LogError(e.ToString());
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateUserMessages.FailedToCreateUser);
             }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                throw new ArgumentException("Password value cannot be empty or whitesapce only");
-            }
-
-            if (storedHash.Length != 64)
-            {
-                throw new ArgumentException("Invalid length of password hash (64 bytes expected).");
-            }
-
-            if (storedSalt.Length != 128)
-            {
-                throw new ArgumentException("Invalid length of password salt (128 bytes expected).");
-            }
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != storedHash[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+            
+            return response;
         }
     }
 }

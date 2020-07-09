@@ -32,6 +32,8 @@ namespace GrowingStrongAPI
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+            services.AddSingleton<IAuthenticationHelper, AuthenticationHelper>();
+            services.AddSingleton<IJwtHelper, JwtHelper>();
 
             var JWTSecret = Configuration["JWTSecret"];
             var key = Encoding.ASCII.GetBytes(JWTSecret);

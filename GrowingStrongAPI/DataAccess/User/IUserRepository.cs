@@ -8,5 +8,6 @@ namespace GrowingStrongAPI.DataAccess
     {
         User GetByEmailAddress(string emailAddress);
         IEnumerable<User> GetAll();
+        int Create(User user);
     }
 }
