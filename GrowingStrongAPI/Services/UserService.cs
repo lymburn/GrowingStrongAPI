@@ -56,9 +56,9 @@ namespace GrowingStrongAPI.Services
 
             try
             {
-                bool passwordCorrect = _authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt);
+                bool passwordIsCorrect = _authenticationHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt);
 
-                if (!passwordCorrect)
+                if (!passwordIsCorrect)
                 {
                     response.ResponseStatus.SetError(ResponseStatusCode.UNAUTHORIZED,
                                                      Constants.AuthenticateUserMessages.InvalidCredentials);
@@ -83,7 +83,10 @@ namespace GrowingStrongAPI.Services
 
             _logger.LogInformation("Successfully authenticated user");
 
+
+            UserDto userDto = _mapper.Map<UserDto>(user);
             response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
+            response.UserDto = userDto;
             response.Token = tokenString;
 
             return response;

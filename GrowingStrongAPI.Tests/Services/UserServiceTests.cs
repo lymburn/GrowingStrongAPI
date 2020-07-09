@@ -174,6 +174,7 @@ namespace GrowingStrongAPI.Tests
             UserDto expectedUserDto = new UserDto();
             user.EmailAddress = email;
             expectedUserDto.EmailAddress = email;
+            expectedUserDto.Id = 1;
 
             mockUserRepository.Setup(u => u.GetByEmailAddress(It.IsAny<string>()))
                               .Returns(user);
@@ -198,6 +199,9 @@ namespace GrowingStrongAPI.Tests
 
             Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.OK);
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.Success);
+
+            Assert.AreEqual(response.UserDto.EmailAddress, expectedUserDto.EmailAddress);
+            Assert.AreEqual(response.UserDto.Id, expectedUserDto.Id);
         }
     }
 }

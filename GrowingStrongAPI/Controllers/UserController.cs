@@ -42,6 +42,7 @@ namespace GrowingStrongAPI.Controllers
             {
                 return Ok(new
                 {
+                    User = response.UserDto,
                     response.Token
                 });
             }
