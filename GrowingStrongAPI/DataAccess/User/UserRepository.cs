@@ -57,8 +57,7 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
-                string sql = $@"SELECT * FROM {UserSchema.Table}
-                                WHERE {UserSchema.Columns.EmailAddress} = '{emailAddress}'";
+                string sql = $@"SELECT * FROM get_account_detail_by_email('{emailAddress}')";
 
                 connection.Open();
 

@@ -9,6 +9,6 @@ namespace GrowingStrongAPI.Models
         public string EmailAddress { get; set; }
 
         [Required]
-        public int Id { get; set; }
+        public int UserId { get; set; }
     }
 }

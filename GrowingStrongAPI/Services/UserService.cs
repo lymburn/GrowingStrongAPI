@@ -72,7 +72,7 @@ namespace GrowingStrongAPI.Services
                 return response;
             }
 
-            string tokenString = _jwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
+            string tokenString = _jwtHelper.GenerateJWT(user.UserId, ConfigurationsHelper.JWTSecret);
 
             if (string.IsNullOrEmpty(tokenString))
             {
@@ -145,7 +145,7 @@ namespace GrowingStrongAPI.Services
             try
             {
                 int userId = _userRepository.Create(user);
-                user.setId(userId);
+                user.UserId = userId;
 
                 _logger.LogInformation("Successfully created user");
 
