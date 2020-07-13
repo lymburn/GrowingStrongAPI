@@ -168,7 +168,7 @@ namespace GrowingStrongAPI.Services
 
         public IList<FoodEntryDto> GetUserFoodEntries(int userId)
         {
-            List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId).ToList();
+            List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
             List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
 
             return foodEntryDtos;

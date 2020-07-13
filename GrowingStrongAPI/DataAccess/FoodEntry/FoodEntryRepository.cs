@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
 using Dapper;
-using Npgsql;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using GrowingStrongAPI.Helpers;
@@ -26,25 +25,41 @@ namespace GrowingStrongAPI.DataAccess
             throw new NotImplementedException();
         }
 
-        public IEnumerable<FoodEntry> GetFoodEntriesOfUser(int userId)
+        public List<FoodEntry> GetFoodEntriesOfUser(int userId)
         {
-            string sql = $"select * from get_user_food_entries ({userId})";
+            string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
+
+            var foodEntryDictionary = new Dictionary<int, FoodEntry>();
 
             using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
                 connection.Open();
 
-                var foodEntries = connection.Query<FoodEntry, Food, Serving, FoodEntry>(
-                    sql,
-                    map: (fe, f, s) =>
+                List<FoodEntry> foodEntries = connection.Query<FoodEntry, Food, int, Serving, FoodEntry>(
+                    foodEntriesSql,
+                    map: (foodEntry, food, selected_serving_id, serving) =>
                     {
-                        fe.Food = f;
-                        fe.SelectedServing = s;
-                        s.Food = f;
+                        FoodEntry mappedFoodEntry;
 
-                        return fe;
+                        if (!foodEntryDictionary.TryGetValue(foodEntry.FoodEntryId, out mappedFoodEntry))
+                        {
+                            mappedFoodEntry = foodEntry;
+                            mappedFoodEntry.Food = food;
+                            mappedFoodEntry.Food.Servings = new List<Serving>();
+
+                            foodEntryDictionary.Add(mappedFoodEntry.FoodEntryId, mappedFoodEntry);
+                        }
+
+                        mappedFoodEntry.Food.Servings.Add(serving);
+
+                        if (serving.ServingId.Equals(selected_serving_id))
+                        {
+                            foodEntry.SelectedServing = serving;
+                        }
+
+                        return mappedFoodEntry;
                     },
-                    splitOn: "food_id, serving_id");
+                    splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
 
                 return foodEntries;
             }
