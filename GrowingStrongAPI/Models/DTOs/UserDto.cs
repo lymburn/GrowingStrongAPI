@@ -1,5 +1,7 @@
 ﻿using System;
+using GrowingStrongAPI.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace GrowingStrongAPI.Models
 {

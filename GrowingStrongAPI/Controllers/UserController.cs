@@ -42,7 +42,7 @@ namespace GrowingStrongAPI.Controllers
             {
                 return Ok(new
                 {
-                    User = response.UserDto,
+                    response.UserDto.UserId,
                     response.Token
                 });
             }
@@ -59,11 +59,18 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             UserDto user = _userService.GetById(id);
             return Ok(user);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/foodEntries")]
+        public IActionResult GetUserFoodEntries(int id)
+        {
+            var entries = _userService.GetUserFoodEntries(id);
+            return Ok(entries);
         }
 
         [AllowAnonymous]
@@ -88,7 +95,7 @@ namespace GrowingStrongAPI.Controllers
 
             return Ok(new
             {
-                User = createResponse.userDto,
+                createResponse.userDto.UserId,
                 authenticateResponse.Token
             });
         }

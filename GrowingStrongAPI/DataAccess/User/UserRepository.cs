@@ -57,12 +57,11 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
-                string sql = $@"SELECT * FROM get_account_detail_by_email('{emailAddress}')";
+                string sql = $@"SELECT * FROM get_user_account_by_email('{emailAddress}')";
 
                 connection.Open();
 
                 User user = connection.Query<User>(sql).AsList().FirstOrDefault();
-
                 return user;
             }
         }
@@ -71,9 +70,6 @@ namespace GrowingStrongAPI.DataAccess
         {
             using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
             {
-                //string sql = $@"INSERT INTO {UserSchema.Table}({UserSchema.Columns.EmailAddress},{UserSchema.Columns.PasswordHash},{UserSchema.Columns.PasswordSalt})
-                //                VALUES (@EmailAddress, @PasswordHash, @PasswordSalt)
-                //                RETURNING ID";
                 int id;
 
                 try
