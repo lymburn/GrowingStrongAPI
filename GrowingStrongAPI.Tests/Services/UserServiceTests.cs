@@ -17,6 +17,7 @@ namespace GrowingStrongAPI.Tests
     {
         IUserService userService;
         Mock<IUserRepository> mockUserRepository;
+        Mock<IFoodEntryRepository> mockFoodEntryRepository;
         Mock<IAuthenticationHelper> mockAuthenticationHelper;
         Mock<ILogger<IUserService>> mockLogger;
         Mock<IMapper> mockMapper;
@@ -26,12 +27,14 @@ namespace GrowingStrongAPI.Tests
         public void TestInitialize()
         {
             mockUserRepository = new Mock<IUserRepository>();
+            mockFoodEntryRepository = new Mock<IFoodEntryRepository>();
             mockAuthenticationHelper = new Mock<IAuthenticationHelper>();
             mockLogger = new Mock<ILogger<IUserService>>();
             mockMapper = new Mock<IMapper>();
             mockJwtHelper = new Mock<IJwtHelper>();
 
             userService = new UserService(mockUserRepository.Object,
+                                          mockFoodEntryRepository.Object,
                                           mockMapper.Object,
                                           mockLogger.Object,
                                           mockAuthenticationHelper.Object,
@@ -72,6 +75,7 @@ namespace GrowingStrongAPI.Tests
                               .Returns<IEnumerable<User>>(null);
 
             userService = new UserService(mockUserRepository.Object,
+                                                           mockFoodEntryRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
@@ -98,6 +102,7 @@ namespace GrowingStrongAPI.Tests
                                                                     .Returns(false);
 
             userService = new UserService(mockUserRepository.Object,
+                                                           mockFoodEntryRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
@@ -125,6 +130,7 @@ namespace GrowingStrongAPI.Tests
                                                                     .Throws(exception);
 
             userService = new UserService(mockUserRepository.Object,
+                                                           mockFoodEntryRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
@@ -152,6 +158,7 @@ namespace GrowingStrongAPI.Tests
                                                                     .Throws(exception);
 
             userService = new UserService(mockUserRepository.Object,
+                                                           mockFoodEntryRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
@@ -174,7 +181,7 @@ namespace GrowingStrongAPI.Tests
             UserDto expectedUserDto = new UserDto();
             user.EmailAddress = email;
             expectedUserDto.EmailAddress = email;
-            expectedUserDto.Id = 1;
+            expectedUserDto.UserId = 1;
 
             mockUserRepository.Setup(u => u.GetByEmailAddress(It.IsAny<string>()))
                               .Returns(user);
@@ -189,6 +196,7 @@ namespace GrowingStrongAPI.Tests
             mockJwtHelper.Setup(m => m.GenerateJWT(It.IsAny<int>(), It.IsAny<string>())).Returns("Token");
 
             userService = new UserService(mockUserRepository.Object,
+                                                           mockFoodEntryRepository.Object,
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
@@ -201,7 +209,7 @@ namespace GrowingStrongAPI.Tests
             Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.Success);
 
             Assert.AreEqual(response.UserDto.EmailAddress, expectedUserDto.EmailAddress);
-            Assert.AreEqual(response.UserDto.Id, expectedUserDto.Id);
+            Assert.AreEqual(response.UserDto.UserId, expectedUserDto.UserId);
         }
     }
 }

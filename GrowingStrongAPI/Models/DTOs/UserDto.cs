@@ -1,5 +1,7 @@
 ﻿using System;
+using GrowingStrongAPI.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace GrowingStrongAPI.Models
 {
@@ -9,6 +11,6 @@ namespace GrowingStrongAPI.Models
         public string EmailAddress { get; set; }
 
         [Required]
-        public int Id { get; set; }
+        public int UserId { get; set; }
     }
 }

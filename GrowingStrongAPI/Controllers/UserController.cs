@@ -59,11 +59,18 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public IActionResult GetById(int id)
         {
             UserDto user = _userService.GetById(id);
             return Ok(user);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id}/foodEntries")]
+        public IActionResult GetUserFoodEntries(int id)
+        {
+            var entries = _userService.GetUserFoodEntries(id);
+            return Ok(entries);
         }
 
         [AllowAnonymous]

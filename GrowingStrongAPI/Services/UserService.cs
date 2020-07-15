@@ -14,18 +14,21 @@ namespace GrowingStrongAPI.Services
     public class UserService : IUserService
     {
         private IUserRepository _userRepository;
+        private IFoodEntryRepository _foodEntryRepository;
         private IMapper _mapper;
         private readonly ILogger _logger;
         private IAuthenticationHelper _authenticationHelper;
         private IJwtHelper _jwtHelper;
 
         public UserService(IUserRepository userRepository,
+                           IFoodEntryRepository foodEntryRepository,
                            IMapper mapper,
                            ILogger<IUserService> logger,
                            IAuthenticationHelper authenticationHelper,
                            IJwtHelper jwtHelper)
         {
             _userRepository = userRepository;
+            _foodEntryRepository = foodEntryRepository;
             _mapper = mapper;
             _logger = logger;
             _authenticationHelper = authenticationHelper;
@@ -72,7 +75,7 @@ namespace GrowingStrongAPI.Services
                 return response;
             }
 
-            string tokenString = _jwtHelper.GenerateJWT(user.Id, ConfigurationsHelper.JWTSecret);
+            string tokenString = _jwtHelper.GenerateJWT(user.UserId, ConfigurationsHelper.JWTSecret);
 
             if (string.IsNullOrEmpty(tokenString))
             {
@@ -83,8 +86,8 @@ namespace GrowingStrongAPI.Services
 
             _logger.LogInformation("Successfully authenticated user");
 
-
             UserDto userDto = _mapper.Map<UserDto>(user);
+
             response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
             response.UserDto = userDto;
             response.Token = tokenString;
@@ -145,7 +148,7 @@ namespace GrowingStrongAPI.Services
             try
             {
                 int userId = _userRepository.Create(user);
-                user.setId(userId);
+                user.UserId = userId;
 
                 _logger.LogInformation("Successfully created user");
 
@@ -161,6 +164,14 @@ namespace GrowingStrongAPI.Services
             }
             
             return response;
+        }
+
+        public IList<FoodEntryDto> GetUserFoodEntries(int userId)
+        {
+            List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
+            List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
+
+            return foodEntryDtos;
         }
     }
 }

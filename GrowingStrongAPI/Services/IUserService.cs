@@ -11,5 +11,6 @@ namespace GrowingStrongAPI.Services
         IEnumerable<User> GetAll();
         UserDto GetById(int id);
         CreateUserResponse Create(User user, string password);
+        public IList<FoodEntryDto> GetUserFoodEntries(int userId);
     }
 }
