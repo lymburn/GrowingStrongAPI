@@ -42,7 +42,7 @@ namespace GrowingStrongAPI.Controllers
             {
                 return Ok(new
                 {
-                    response.UserDto.UserId,
+                    User = response.UserDto,
                     response.Token
                 });
             }
@@ -95,7 +95,7 @@ namespace GrowingStrongAPI.Controllers
 
             return Ok(new
             {
-                createResponse.userDto.UserId,
+                User = createResponse.userDto,
                 authenticateResponse.Token
             });
         }
