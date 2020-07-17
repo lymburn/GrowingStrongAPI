@@ -68,8 +68,14 @@ namespace GrowingStrongAPI.Controllers
         [HttpGet("{id}/foodEntries")]
         public IActionResult GetUserFoodEntries(int id)
         {
-            var entries = _userService.GetUserFoodEntries(id);
-            return Ok(entries);
+            GetUserFoodEntriesResponse response = _userService.GetUserFoodEntries(id);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok(response.FoodEntryDtos);
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [AllowAnonymous]

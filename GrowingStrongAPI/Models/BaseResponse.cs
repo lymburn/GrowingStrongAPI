@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace GrowingStrongAPI.Models
 {
     public class BaseResponse

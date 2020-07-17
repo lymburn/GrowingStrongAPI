@@ -166,12 +166,38 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public IList<FoodEntryDto> GetUserFoodEntries(int userId)
+        public GetUserFoodEntriesResponse GetUserFoodEntries(int userId)
         {
-            List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
-            List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
 
-            return foodEntryDtos;
+            GetUserFoodEntriesResponse response = new GetUserFoodEntriesResponse();
+
+            User user = _userRepository.GetById(userId);
+
+            if (user is null)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.NOT_FOUND,
+                                                 Constants.GetUserFoodEntriesMessages.UserDoesNotExist);
+
+                return response;
+            }
+
+            try
+            {
+                List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
+                List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
+
+                response.ResponseStatus.SetOk(Constants.GetUserFoodEntriesMessages.Success);
+                response.FoodEntryDtos = foodEntryDtos;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.GetUserFoodEntriesMessages.FailedToUpdateFoodEntry);
+            }
+
+            return response;
         }
     }
 }

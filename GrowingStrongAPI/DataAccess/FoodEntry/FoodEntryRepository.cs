@@ -32,39 +32,45 @@ namespace GrowingStrongAPI.DataAccess
 
             var foodEntryDictionary = new Dictionary<int, FoodEntry>();
 
-            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+            try
             {
-                connection.Open();
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
 
-                List<FoodEntry> foodEntries = connection.Query<FoodEntry, Food, int, Serving, FoodEntry>(
-                    foodEntriesSql,
-                    map: (foodEntry, food, selected_serving_id, serving) =>
-                    {
-                        FoodEntry mappedFoodEntry;
-
-                        if (!foodEntryDictionary.TryGetValue(foodEntry.FoodEntryId, out mappedFoodEntry))
+                    List<FoodEntry> foodEntries = connection.Query<FoodEntry, Food, int, Serving, FoodEntry>(
+                        foodEntriesSql,
+                        map: (foodEntry, food, selected_serving_id, serving) =>
                         {
-                            mappedFoodEntry = foodEntry;
-                            mappedFoodEntry.Food = food;
-                            mappedFoodEntry.Food.Servings = new List<Serving>();
+                            FoodEntry mappedFoodEntry;
 
-                            foodEntryDictionary.Add(mappedFoodEntry.FoodEntryId, mappedFoodEntry);
-                        }
+                            if (!foodEntryDictionary.TryGetValue(foodEntry.FoodEntryId, out mappedFoodEntry))
+                            {
+                                mappedFoodEntry = foodEntry;
+                                mappedFoodEntry.Food = food;
+                                mappedFoodEntry.Food.Servings = new List<Serving>();
 
-                        mappedFoodEntry.Food.Servings.Add(serving);
+                                foodEntryDictionary.Add(mappedFoodEntry.FoodEntryId, mappedFoodEntry);
+                            }
 
-                        if (serving.ServingId.Equals(selected_serving_id))
-                        {
-                            foodEntry.SelectedServing = serving;
-                        }
+                            mappedFoodEntry.Food.Servings.Add(serving);
 
-                        return mappedFoodEntry;
-                    },
-                    splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
+                            if (serving.ServingId.Equals(selected_serving_id))
+                            {
+                                foodEntry.SelectedServing = serving;
+                            }
 
-                return foodEntries;
+                            return mappedFoodEntry;
+                        },
+                        splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
+
+                    return foodEntries;
+                }
             }
-
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)

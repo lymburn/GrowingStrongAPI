@@ -25,5 +25,12 @@ namespace GrowingStrongAPI.Helpers
             public const string FailedToCreateUser = "Failed to create user";
             public const string Success = "Successfully created user";
         }
+
+        public static class GetUserFoodEntriesMessages
+        {
+            public const string UserDoesNotExist = "User with this id not found";
+            public const string FailedToUpdateFoodEntry = "Failed to retrieve food entries for this user";
+            public const string Success = "Successfully retrieved food entries for this user";
+        }
     }
 }
