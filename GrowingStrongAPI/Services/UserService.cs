@@ -47,8 +47,21 @@ namespace GrowingStrongAPI.Services
                                                  Constants.AuthenticateUserMessages.InvalidCredentials);
                 return response;
             }
-            
-            User user = _userRepository.GetByEmailAddress(emailAddress);
+
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetByEmailAddress(emailAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                return response;
+            }
 
             if (user is null)
             {
@@ -68,8 +81,10 @@ namespace GrowingStrongAPI.Services
                     return response;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
                 return response;
@@ -95,13 +110,6 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public IEnumerable<User> GetAll()
-        {
-            _logger.LogInformation("Getting all users");
-
-            return _userRepository.GetAll();
-        }
-
         public UserDto GetById(int id)
         {
             _logger.LogInformation($"Getting user by id: {id}");
@@ -123,7 +131,21 @@ namespace GrowingStrongAPI.Services
                 return response;
             }
 
-            if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
+            User retrievedUser = null;
+
+            try
+            {
+               retrievedUser = _userRepository.GetByEmailAddress(user.EmailAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+            }
+
+            if (!(retrievedUser is null))
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
                                                  Constants.CreateUserMessages.UserAlreadyExists);
@@ -140,6 +162,7 @@ namespace GrowingStrongAPI.Services
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.CreateUserMessages.FailedToCreatePasswordHash);
                 return response;
@@ -159,6 +182,7 @@ namespace GrowingStrongAPI.Services
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.CreateUserMessages.FailedToCreateUser);
             }
@@ -171,7 +195,19 @@ namespace GrowingStrongAPI.Services
 
             GetUserFoodEntriesResponse response = new GetUserFoodEntriesResponse();
 
-            User user = _userRepository.GetById(userId);
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetById(userId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+            }
 
             if (user is null)
             {

@@ -50,14 +50,6 @@ namespace GrowingStrongAPI.Controllers
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            List<User> users = _userService.GetAll().AsList();
-
-            return Ok(users);
-        }
-
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {

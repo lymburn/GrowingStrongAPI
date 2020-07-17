@@ -28,12 +28,12 @@ namespace GrowingStrongAPI.DataAccess
 
         public List<FoodEntry> GetFoodEntriesOfUser(int userId)
         {
-            string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
-
-            var foodEntryDictionary = new Dictionary<int, FoodEntry>();
-
             try
             {
+                string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
+
+                var foodEntryDictionary = new Dictionary<int, FoodEntry>();
+
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
                     connection.Open();
@@ -75,13 +75,14 @@ namespace GrowingStrongAPI.DataAccess
 
         public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
         {
-            double servingAmount = updateModel.ServingAmount;
-            int selectedServingId = updateModel.SelectedServingId;
-
-            string sql = $"call update_food_entry_serving_size({foodEntryId},{servingAmount},{selectedServingId})";
-
             try
             {
+                double servingAmount = updateModel.ServingAmount;
+
+                int selectedServingId = updateModel.SelectedServingId;
+
+                string sql = $"call update_food_entry_serving_size({foodEntryId},{servingAmount},{selectedServingId})";
+
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
                     connection.Open();

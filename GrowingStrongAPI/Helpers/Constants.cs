@@ -3,6 +3,11 @@ namespace GrowingStrongAPI.Helpers
 {
     public static class Constants
     {
+        public static class SharedErrorMessages
+        {
+            public const string FailedToRetrieveUser = "Error occurred trying to retrieve user";
+        }
+
         public static class AuthenticationHelperExceptions
         {
             public const string InvalidPasswordHashLength = "Invalid length of password hash (64 bytes expected)";
