@@ -65,7 +65,6 @@ namespace GrowingStrongAPI.Controllers
             return Ok(user);
         }
 
-        [AllowAnonymous]
         [HttpGet("{id}/foodEntries")]
         public IActionResult GetUserFoodEntries(int id)
         {

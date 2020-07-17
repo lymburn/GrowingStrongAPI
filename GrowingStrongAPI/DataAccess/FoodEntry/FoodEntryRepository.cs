@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Models;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace GrowingStrongAPI.DataAccess
         private readonly ILogger _logger;
 
         public FoodEntryRepository(IDbConnectionFactory dbConnectionFactory,
-                      ILogger<IUserRepository> logger)
+                                   ILogger<IFoodEntryRepository> logger)
         {
             _dbConnectionFactory = dbConnectionFactory;
             _logger = logger;
@@ -62,6 +63,29 @@ namespace GrowingStrongAPI.DataAccess
                     splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
 
                 return foodEntries;
+            }
+
+        }
+
+        public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
+        {
+            double servingAmount = updateModel.ServingAmount;
+            int selectedServingId = updateModel.SelectedServingId;
+
+            string sql = $"call update_food_entry_serving_size({foodEntryId},{servingAmount},{selectedServingId})";
+
+            try
+            {
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
 
         }

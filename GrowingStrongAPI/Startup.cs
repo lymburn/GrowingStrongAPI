@@ -30,6 +30,7 @@ namespace GrowingStrongAPI
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFoodEntryService, FoodEntryService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFoodEntryRepository, FoodEntryRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
