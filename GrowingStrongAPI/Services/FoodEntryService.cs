@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Helpers.Extensions;
+using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Models;
-using GrowingStrongAPI.Helpers;
-using GrowingStrongAPI.Helpers.Extensions;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 
@@ -26,9 +26,25 @@ namespace GrowingStrongAPI.Services
             _logger = logger;
         }
 
-        public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
+        public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
         {
-            _foodEntryRepository.UpdateFoodEntry(foodEntryId, updateModel);
+            UpdateFoodEntryResponse response = new UpdateFoodEntryResponse();
+
+            try
+            {
+                _foodEntryRepository.UpdateFoodEntry(foodEntryId, updateModel);
+
+                response.ResponseStatus.SetOk(Constants.UpdateFoodEntryMessages.Success);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.UpdateFoodEntryMessages.FailedToUpdateFoodEntry);
+            }
+
+            return response;
         }
     }
 }

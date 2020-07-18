@@ -33,9 +33,16 @@ namespace GrowingStrongAPI.Helpers
 
         public static class GetUserFoodEntriesMessages
         {
-            public const string UserDoesNotExist = "User with this id not found";
-            public const string FailedToUpdateFoodEntry = "Failed to retrieve food entries for this user";
+            public const string UserDoesNotExist = "Unable to find user with this id";
+            public const string FailedToRetrieveFoodEntry = "Failed to retrieve food entries for this user";
             public const string Success = "Successfully retrieved food entries for this user";
+        }
+
+        public static class UpdateFoodEntryMessages
+        {
+            public const string FoodEntryDoesNotExist = "Unable to find food entry with this id";
+            public const string FailedToUpdateFoodEntry = "Failed to update food entry";
+            public const string Success = "Successfully update food entry";
         }
     }
 }

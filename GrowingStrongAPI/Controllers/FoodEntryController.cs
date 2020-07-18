@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GrowingStrongAPI.Helpers.Extensions;
 using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,16 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public void UpdateFoodEntry(int id, [FromBody] FoodEntryUpdateModel updateModel)
+        public IActionResult UpdateFoodEntry(int id, [FromBody] FoodEntryUpdateModel updateModel)
         {
-            _foodEntryService.UpdateFoodEntry(id, updateModel);
+            UpdateFoodEntryResponse response = _foodEntryService.UpdateFoodEntry(id, updateModel);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [HttpDelete("{id}")]

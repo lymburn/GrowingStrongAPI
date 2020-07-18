@@ -7,6 +7,6 @@ namespace GrowingStrongAPI.Services
 {
     public interface IFoodEntryService
     {
-        public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel);
+        public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel);
     }
 }
