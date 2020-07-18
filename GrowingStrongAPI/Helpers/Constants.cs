@@ -5,6 +5,7 @@ namespace GrowingStrongAPI.Helpers
     {
         public static class SharedErrorMessages
         {
+            public const string UserDoesNotExist = "Unable to find user with this id";
             public const string FailedToRetrieveUser = "Error occurred trying to retrieve user";
         }
 
@@ -22,6 +23,11 @@ namespace GrowingStrongAPI.Helpers
             public const string Success = "Successfully authenticated user";
         }
 
+        public static class GetUserByIdMessages
+        {
+            public const string Success = "Successfully retrieved user";
+        }
+
         public static class CreateUserMessages
         {
             public const string NullOrEmptyCredentials = "Email or password is null or empty";
@@ -33,7 +39,6 @@ namespace GrowingStrongAPI.Helpers
 
         public static class GetUserFoodEntriesMessages
         {
-            public const string UserDoesNotExist = "Unable to find user with this id";
             public const string FailedToRetrieveFoodEntry = "Failed to retrieve food entries for this user";
             public const string Success = "Successfully retrieved food entries for this user";
         }

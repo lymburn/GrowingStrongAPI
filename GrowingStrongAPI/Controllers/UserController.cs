@@ -51,10 +51,19 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetUserById(int id)
         {
-            UserDto user = _userService.GetById(id);
-            return Ok(user);
+            GetUserByIdResponse response = _userService.GetUserById(id);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok(new
+                {
+                    User = response.UserDto
+                }); ;
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [HttpGet("{id}/foodEntries")]

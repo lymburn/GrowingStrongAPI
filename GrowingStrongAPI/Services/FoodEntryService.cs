@@ -28,6 +28,7 @@ namespace GrowingStrongAPI.Services
 
         public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
         {
+            //TODO: Handle food entry with non existent id
             UpdateFoodEntryResponse response = new UpdateFoodEntryResponse();
 
             try

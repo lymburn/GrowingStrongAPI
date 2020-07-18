@@ -12,6 +12,7 @@ using AutoMapper;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Services;
 using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Models;
 
 namespace GrowingStrongAPI
 {
@@ -54,13 +55,14 @@ namespace GrowingStrongAPI
                    {
                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                        var userId = int.Parse(context.Principal.Identity.Name);
-                       var user = userService.GetById(userId);
+                       var response = userService.GetUserById(userId);
 
-                       if (user is null)
+                       if (response.ResponseStatus.Status.Equals(ResponseStatusCode.NOT_FOUND))
                        {
-                            //Unauthorized
-                            context.Fail("Unauthorized");
+                           //Unauthorized
+                           context.Fail("Unauthorized");
                        }
+
                        return Task.CompletedTask;
                    }
                };

@@ -110,14 +110,42 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public UserDto GetById(int id)
+        public GetUserByIdResponse GetUserById(int id)
         {
+            GetUserByIdResponse response = new GetUserByIdResponse();
+
             _logger.LogInformation($"Getting user by id: {id}");
 
-            User user = _userRepository.GetById(id);
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetById(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+
+                return response;
+            }
+
+            if (user is null)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.NOT_FOUND,
+                                                 Constants.SharedErrorMessages.UserDoesNotExist);
+
+                return response;
+            }
+
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            return userDto;
+            response.ResponseStatus.SetOk(Constants.GetUserByIdMessages.Success);
+            response.UserDto = userDto;
+
+            return response;
         }
 
         public CreateUserResponse Create(User user, string password)
@@ -141,7 +169,7 @@ namespace GrowingStrongAPI.Services
             {
                 _logger.LogError(e.ToString());
 
-                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                  Constants.SharedErrorMessages.FailedToRetrieveUser);
             }
 
@@ -212,7 +240,7 @@ namespace GrowingStrongAPI.Services
             if (user is null)
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.NOT_FOUND,
-                                                 Constants.GetUserFoodEntriesMessages.UserDoesNotExist);
+                                                 Constants.SharedErrorMessages.UserDoesNotExist);
 
                 return response;
             }
