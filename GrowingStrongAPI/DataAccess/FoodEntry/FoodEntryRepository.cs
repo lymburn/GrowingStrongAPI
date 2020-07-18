@@ -96,5 +96,25 @@ namespace GrowingStrongAPI.DataAccess
             }
 
         }
+
+        public void DeleteFoodEntry(int foodEntryId)
+        {
+            try
+            {
+                string sql = $"call delete_food_entry({foodEntryId})";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+      
+        }
     }
 }

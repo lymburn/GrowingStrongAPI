@@ -40,8 +40,16 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult DeleteFoodEntry(int id)
         {
+            DeleteFoodEntryResponse response = _foodEntryService.DeleteFoodEntry(id);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
     }
 }

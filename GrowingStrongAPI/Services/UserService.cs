@@ -103,7 +103,7 @@ namespace GrowingStrongAPI.Services
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
+            response.ResponseStatus.SetOk();
             response.UserDto = userDto;
             response.Token = tokenString;
 
@@ -142,7 +142,7 @@ namespace GrowingStrongAPI.Services
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            response.ResponseStatus.SetOk(Constants.GetUserByIdMessages.Success);
+            response.ResponseStatus.SetOk();
             response.UserDto = userDto;
 
             return response;
@@ -204,7 +204,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogInformation("Successfully created user");
 
                 UserDto userDto = _mapper.Map<UserDto>(user);
-                response.ResponseStatus.SetOk(Constants.CreateUserMessages.Success);
+                response.ResponseStatus.SetOk();
                 response.userDto = userDto;
             }
             catch (Exception e)
@@ -250,7 +250,7 @@ namespace GrowingStrongAPI.Services
                 List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
                 List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
 
-                response.ResponseStatus.SetOk(Constants.GetUserFoodEntriesMessages.Success);
+                response.ResponseStatus.SetOk();
                 response.FoodEntryDtos = foodEntryDtos;
             }
             catch (Exception e)

@@ -8,5 +8,6 @@ namespace GrowingStrongAPI.Services
     public interface IFoodEntryService
     {
         public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel);
+        public DeleteFoodEntryResponse DeleteFoodEntry(int foodEntryId);
     }
 }

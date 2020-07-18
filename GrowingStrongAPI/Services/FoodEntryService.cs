@@ -35,7 +35,7 @@ namespace GrowingStrongAPI.Services
             {
                 _foodEntryRepository.UpdateFoodEntry(foodEntryId, updateModel);
 
-                response.ResponseStatus.SetOk(Constants.UpdateFoodEntryMessages.Success);
+                response.ResponseStatus.SetOk();
             }
             catch (Exception e)
             {
@@ -43,6 +43,27 @@ namespace GrowingStrongAPI.Services
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.UpdateFoodEntryMessages.FailedToUpdateFoodEntry);
+            }
+
+            return response;
+        }
+
+        public DeleteFoodEntryResponse DeleteFoodEntry(int foodEntryId)
+        {
+            DeleteFoodEntryResponse response = new DeleteFoodEntryResponse();
+
+            try
+            {
+                _foodEntryRepository.DeleteFoodEntry(foodEntryId);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.DeleteFoodEntryMessages.FailedToDeleteFoodEntry);
             }
 
             return response;

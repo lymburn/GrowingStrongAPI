@@ -10,5 +10,6 @@ namespace GrowingStrongAPI.DataAccess
         FoodEntry GetByUserAndFoodId(int userId, int foodId);
         List<FoodEntry> GetFoodEntriesOfUser(int userId);
         void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel);
+        void DeleteFoodEntry(int foodEntryId);
     }
 }
