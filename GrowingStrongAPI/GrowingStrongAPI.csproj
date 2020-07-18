@@ -38,6 +38,11 @@
     <Folder Include="Models\Responses\" />
     <Folder Include="Models\Responses\UserService\" />
     <Folder Include="Models\Responses\FoodEntryService\" />
+    <Folder Include="Services\FoodEntry\" />
+    <Folder Include="Services\User\" />
+    <Folder Include="Services\Food\" />
+    <Folder Include="Models\Responses\FoodService\" />
+    <Folder Include="DataAccess\Food\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DataAccess\Repository.cs" />

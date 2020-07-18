@@ -32,8 +32,10 @@ namespace GrowingStrongAPI
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFoodEntryService, FoodEntryService>();
+            services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFoodEntryRepository, FoodEntryRepository>();
+            services.AddScoped<IFoodRepository, FoodRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
             services.AddSingleton<IAuthenticationHelper, AuthenticationHelper>();
             services.AddSingleton<IJwtHelper, JwtHelper>();

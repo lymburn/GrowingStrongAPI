@@ -50,5 +50,11 @@ namespace GrowingStrongAPI.Helpers
         {
             public const string FailedToDeleteFoodEntry = "Failed to delete food entry";
         }
+
+        public static class GetFoodsStartingWithPatternMessages
+        {
+            public const string InvalidPattern = "Invalid pattern argument in GetFoodsStartingWithPattern function";
+            public const string FailedToGetFoods = "Failed to get foods";
+        }
     }
 }
