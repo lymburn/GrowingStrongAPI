@@ -81,7 +81,7 @@ namespace GrowingStrongAPI.DataAccess
 
                 int foodId = createModel.FoodId;
 
-                string dateAdded = createModel.DateAdded;
+                string dateAdded = createModel.DateAdded.ToString("yyyy-MM-dd");
 
                 double servingAmount = createModel.ServingAmount;
 

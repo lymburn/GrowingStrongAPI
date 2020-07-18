@@ -7,7 +7,7 @@ namespace GrowingStrongAPI.Models
 
         public int FoodId { get; set; }
 
-        public string DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
 
         public double ServingAmount { get; set; }
 
