@@ -26,6 +26,27 @@ namespace GrowingStrongAPI.Services
             _logger = logger;
         }
 
+        public CreateFoodEntryResponse CreateFoodEntry(FoodEntryCreateModel createModel)
+        {
+            CreateFoodEntryResponse response = new CreateFoodEntryResponse();
+
+            try
+            {
+                _foodEntryRepository.CreateFoodEntry(createModel);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateFoodEntryMessages.FailedToCreateFoodEntry);
+            }
+
+            return response;
+        }
+
         public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
         {
             //TODO: Handle food entry with non existent id
@@ -50,6 +71,8 @@ namespace GrowingStrongAPI.Services
 
         public DeleteFoodEntryResponse DeleteFoodEntry(int foodEntryId)
         {
+            //TODO: Handle food entry with non existent id
+
             DeleteFoodEntryResponse response = new DeleteFoodEntryResponse();
 
             try

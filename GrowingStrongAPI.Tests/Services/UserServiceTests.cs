@@ -206,7 +206,6 @@ namespace GrowingStrongAPI.Tests
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
             Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.OK);
-            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.Success);
 
             Assert.AreEqual(response.UserDto.EmailAddress, expectedUserDto.EmailAddress);
             Assert.AreEqual(response.UserDto.UserId, expectedUserDto.UserId);

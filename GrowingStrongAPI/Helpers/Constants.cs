@@ -7,6 +7,7 @@ namespace GrowingStrongAPI.Helpers
         {
             public const string UserDoesNotExist = "Unable to find user with this id";
             public const string FailedToRetrieveUser = "Error occurred trying to retrieve user";
+            public const string FoodEntryDoesNotExist = "Unable to find food entry with this id";
         }
 
         public static class AuthenticationHelperExceptions
@@ -35,9 +36,13 @@ namespace GrowingStrongAPI.Helpers
             public const string FailedToRetrieveFoodEntry = "Failed to retrieve food entries for this user";
         }
 
+        public static class CreateFoodEntryMessages
+        {
+            public const string FailedToCreateFoodEntry = "Failed to create food entry";
+        }
+
         public static class UpdateFoodEntryMessages
         {
-            public const string FoodEntryDoesNotExist = "Unable to find food entry with this id";
             public const string FailedToUpdateFoodEntry = "Failed to update food entry";
         }
 

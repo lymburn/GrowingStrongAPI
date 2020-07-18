@@ -26,6 +26,19 @@ namespace GrowingStrongAPI.Controllers
             _logger = logger;
         }
 
+        [HttpPost]
+        public IActionResult CreateFoodEntry([FromBody] FoodEntryCreateModel createModel)
+        {
+            CreateFoodEntryResponse response = _foodEntryService.CreateFoodEntry(createModel);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
         [HttpPut("{id}")]
         public IActionResult UpdateFoodEntry(int id, [FromBody] FoodEntryUpdateModel updateModel)
         {

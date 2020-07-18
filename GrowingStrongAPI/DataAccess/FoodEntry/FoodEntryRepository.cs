@@ -73,6 +73,36 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
+        public void CreateFoodEntry(FoodEntryCreateModel createModel)
+        {
+            try
+            {
+                int userId = createModel.UserId;
+
+                int foodId = createModel.FoodId;
+
+                string dateAdded = createModel.DateAdded;
+
+                double servingAmount = createModel.ServingAmount;
+
+                int selectedServingId = createModel.SelectedServingId;
+
+                string sql = $"select * from create_food_entry({userId},{foodId},'{dateAdded}',{servingAmount},{selectedServingId})";
+
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
         {
             try

@@ -35,7 +35,6 @@
     <Folder Include="Helpers\Schemas\" />
     <Folder Include="DataAccess\FoodEntry\" />
     <Folder Include="Models\DTOs\" />
-    <Folder Include="Models\FoodEntries\" />
     <Folder Include="Models\Responses\" />
     <Folder Include="Models\Responses\UserService\" />
     <Folder Include="Models\Responses\FoodEntryService\" />
