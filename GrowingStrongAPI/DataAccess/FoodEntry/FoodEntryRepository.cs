@@ -57,7 +57,7 @@ namespace GrowingStrongAPI.DataAccess
 
                             if (serving.ServingId.Equals(selected_serving_id))
                             {
-                                foodEntry.SelectedServing = serving;
+                                mappedFoodEntry.SelectedServing = serving;
                             }
 
                             return mappedFoodEntry;
