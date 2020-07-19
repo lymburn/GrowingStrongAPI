@@ -6,6 +6,6 @@ namespace GrowingStrongAPI.DataAccess
 {
     public interface IFoodRepository
     {
-        public List<Food> GetFoodsStartingWithPattern(string pattern);
+        public List<Food> GetFoodsByFullTextSearch(string query);
     }
 }

@@ -16,11 +16,11 @@ namespace GrowingStrongAPI.DataAccess
             _dbConnectionFactory = dbConnectionFactory;
         }
 
-        public List<Food> GetFoodsStartingWithPattern(string pattern)
+        public List<Food> GetFoodsByFullTextSearch(string query)
         {
             try
             {
-                string sql = $"select * from get_foods_starting_with_pattern('{pattern}')";
+                string sql = $"select * from get_foods_by_full_text_search('{query}')";
 
                 var foodDictionary = new Dictionary<int, Food>();
 

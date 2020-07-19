@@ -23,9 +23,9 @@ namespace GrowingStrongAPI.Controllers
 
         //TODO: Add pagination support
         [HttpGet]
-        public IActionResult GetFoodsStartingWithPattern([FromQuery] string startingWith)
+        public IActionResult GetFoodsByFullTextSearch([FromQuery] string query)
         {
-            GetFoodsStartingWithPatternResponse response = _foodService.GetFoodsStartingWithPattern(startingWith);
+            GetFoodsByFullTextSearchResponse response = _foodService.GetFoodsByFullTextSearch(query);
 
             if (!response.ResponseStatus.HasError())
             {

@@ -25,21 +25,21 @@ namespace GrowingStrongAPI.Services
             _mapper = mapper;
         }
 
-        public GetFoodsStartingWithPatternResponse GetFoodsStartingWithPattern(string pattern)
+        public GetFoodsByFullTextSearchResponse GetFoodsByFullTextSearch(string query)
         {
-            GetFoodsStartingWithPatternResponse response = new GetFoodsStartingWithPatternResponse();
+            GetFoodsByFullTextSearchResponse response = new GetFoodsByFullTextSearchResponse();
 
-            if (string.IsNullOrEmpty(pattern))
+            if (string.IsNullOrEmpty(query))
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
-                                                 Constants.GetFoodsStartingWithPatternMessages.InvalidPattern);
+                                                 Constants.GetFoodsStartingWithPatternMessages.InvalidQuery);
 
                 return response;
             }
 
             try
             {
-                List<Food> foods = _foodRepository.GetFoodsStartingWithPattern(pattern);
+                List<Food> foods = _foodRepository.GetFoodsByFullTextSearch(query);
 
                 List<FoodDto> foodDtos = _mapper.Map<List<FoodDto>>(foods);
 

@@ -4,11 +4,11 @@ using GrowingStrongAPI.Models;
 
 namespace GrowingStrongAPI.Models
 {
-    public class GetFoodsStartingWithPatternResponse : BaseResponse
+    public class GetFoodsByFullTextSearchResponse : BaseResponse
     {
         public IList<FoodDto> FoodDtos;
 
-        public GetFoodsStartingWithPatternResponse()
+        public GetFoodsByFullTextSearchResponse()
         {
             FoodDtos = new List<FoodDto>();
         }

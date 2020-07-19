@@ -5,6 +5,6 @@ namespace GrowingStrongAPI.Services
 {
     public interface IFoodService
     {
-        public GetFoodsStartingWithPatternResponse GetFoodsStartingWithPattern(string pattern);
+        public GetFoodsByFullTextSearchResponse GetFoodsByFullTextSearch(string query);
     }
 }

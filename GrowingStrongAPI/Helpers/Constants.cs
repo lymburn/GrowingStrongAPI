@@ -53,7 +53,7 @@ namespace GrowingStrongAPI.Helpers
 
         public static class GetFoodsStartingWithPatternMessages
         {
-            public const string InvalidPattern = "Invalid pattern argument in GetFoodsStartingWithPattern function";
+            public const string InvalidQuery = "Invalid query text";
             public const string FailedToGetFoods = "Failed to get foods";
         }
     }
