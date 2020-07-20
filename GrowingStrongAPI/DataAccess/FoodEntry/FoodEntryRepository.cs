@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Models;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace GrowingStrongAPI.DataAccess
         private readonly ILogger _logger;
 
         public FoodEntryRepository(IDbConnectionFactory dbConnectionFactory,
-                      ILogger<IUserRepository> logger)
+                                   ILogger<IFoodEntryRepository> logger)
         {
             _dbConnectionFactory = dbConnectionFactory;
             _logger = logger;
@@ -27,43 +28,123 @@ namespace GrowingStrongAPI.DataAccess
 
         public List<FoodEntry> GetFoodEntriesOfUser(int userId)
         {
-            string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
-
-            var foodEntryDictionary = new Dictionary<int, FoodEntry>();
-
-            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+            try
             {
-                connection.Open();
+                string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
 
-                List<FoodEntry> foodEntries = connection.Query<FoodEntry, Food, int, Serving, FoodEntry>(
-                    foodEntriesSql,
-                    map: (foodEntry, food, selected_serving_id, serving) =>
-                    {
-                        FoodEntry mappedFoodEntry;
+                var foodEntryDictionary = new Dictionary<int, FoodEntry>();
 
-                        if (!foodEntryDictionary.TryGetValue(foodEntry.FoodEntryId, out mappedFoodEntry))
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    List<FoodEntry> foodEntries = connection.Query<FoodEntry, Food, int, Serving, FoodEntry>(
+                        foodEntriesSql,
+                        map: (foodEntry, food, selected_serving_id, serving) =>
                         {
-                            mappedFoodEntry = foodEntry;
-                            mappedFoodEntry.Food = food;
-                            mappedFoodEntry.Food.Servings = new List<Serving>();
+                            FoodEntry mappedFoodEntry;
 
-                            foodEntryDictionary.Add(mappedFoodEntry.FoodEntryId, mappedFoodEntry);
-                        }
+                            if (!foodEntryDictionary.TryGetValue(foodEntry.FoodEntryId, out mappedFoodEntry))
+                            {
+                                mappedFoodEntry = foodEntry;
+                                mappedFoodEntry.Food = food;
+                                mappedFoodEntry.Food.Servings = new List<Serving>();
 
-                        mappedFoodEntry.Food.Servings.Add(serving);
+                                foodEntryDictionary.Add(mappedFoodEntry.FoodEntryId, mappedFoodEntry);
+                            }
 
-                        if (serving.ServingId.Equals(selected_serving_id))
-                        {
-                            foodEntry.SelectedServing = serving;
-                        }
+                            mappedFoodEntry.Food.Servings.Add(serving);
 
-                        return mappedFoodEntry;
-                    },
-                    splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
+                            if (serving.ServingId.Equals(selected_serving_id))
+                            {
+                                mappedFoodEntry.SelectedServing = serving;
+                            }
 
-                return foodEntries;
+                            return mappedFoodEntry;
+                        },
+                        splitOn: "food_id, selected_serving_id, serving_id").Distinct().ToList();
+
+                    return foodEntries;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void CreateFoodEntry(FoodEntryCreateModel createModel)
+        {
+            try
+            {
+                int userId = createModel.UserId;
+
+                int foodId = createModel.FoodId;
+
+                string dateAdded = createModel.DateAdded.ToString("yyyy-MM-dd");
+
+                double servingAmount = createModel.ServingAmount;
+
+                int selectedServingId = createModel.SelectedServingId;
+
+                string sql = $"select * from create_food_entry({userId},{foodId},'{dateAdded}',{servingAmount},{selectedServingId})";
+
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
+        {
+            try
+            {
+                double servingAmount = updateModel.ServingAmount;
+
+                int selectedServingId = updateModel.SelectedServingId;
+
+                string sql = $"call update_food_entry_serving_size({foodEntryId},{servingAmount},{selectedServingId})";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
 
+        }
+
+        public void DeleteFoodEntry(int foodEntryId)
+        {
+            try
+            {
+                string sql = $"call delete_food_entry({foodEntryId})";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+      
         }
     }
 }

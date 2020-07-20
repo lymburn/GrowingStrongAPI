@@ -50,27 +50,33 @@ namespace GrowingStrongAPI.Controllers
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            List<User> users = _userService.GetAll().AsList();
-
-            return Ok(users);
-        }
-
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetUserById(int id)
         {
-            UserDto user = _userService.GetById(id);
-            return Ok(user);
+            GetUserByIdResponse response = _userService.GetUserById(id);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok(new
+                {
+                    User = response.UserDto
+                }); ;
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
-        [AllowAnonymous]
         [HttpGet("{id}/foodEntries")]
         public IActionResult GetUserFoodEntries(int id)
         {
-            var entries = _userService.GetUserFoodEntries(id);
-            return Ok(entries);
+            GetUserFoodEntriesResponse response = _userService.GetUserFoodEntries(id);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok(response.FoodEntryDtos);
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
         [AllowAnonymous]

@@ -12,6 +12,7 @@ using AutoMapper;
 using GrowingStrongAPI.DataAccess;
 using GrowingStrongAPI.Services;
 using GrowingStrongAPI.Helpers;
+using GrowingStrongAPI.Models;
 
 namespace GrowingStrongAPI
 {
@@ -30,8 +31,11 @@ namespace GrowingStrongAPI
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFoodEntryService, FoodEntryService>();
+            services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFoodEntryRepository, FoodEntryRepository>();
+            services.AddScoped<IFoodRepository, FoodRepository>();
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
             services.AddSingleton<IAuthenticationHelper, AuthenticationHelper>();
             services.AddSingleton<IJwtHelper, JwtHelper>();
@@ -53,13 +57,14 @@ namespace GrowingStrongAPI
                    {
                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                        var userId = int.Parse(context.Principal.Identity.Name);
-                       var user = userService.GetById(userId);
+                       var response = userService.GetUserById(userId);
 
-                       if (user is null)
+                       if (response.ResponseStatus.Status.Equals(ResponseStatusCode.NOT_FOUND))
                        {
-                            //Unauthorized
-                            context.Fail("Unauthorized");
+                           //Unauthorized
+                           context.Fail("Unauthorized");
                        }
+
                        return Task.CompletedTask;
                    }
                };

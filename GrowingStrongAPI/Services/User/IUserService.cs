@@ -8,9 +8,8 @@ namespace GrowingStrongAPI.Services
     public interface IUserService
     {
         AuthenticateUserResponse Authenticate(string emailAddress, string password);
-        IEnumerable<User> GetAll();
-        UserDto GetById(int id);
+        GetUserByIdResponse GetUserById(int id);
         CreateUserResponse Create(User user, string password);
-        public IList<FoodEntryDto> GetUserFoodEntries(int userId);
+        GetUserFoodEntriesResponse GetUserFoodEntries(int userId);
     }
 }

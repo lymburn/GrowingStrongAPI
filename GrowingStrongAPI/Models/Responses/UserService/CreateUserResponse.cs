@@ -1,7 +1,7 @@
 ﻿using System;
 namespace GrowingStrongAPI.Models
 {
-    public class CreateUserResponse: BaseResponse
+    public class CreateUserResponse : BaseResponse
     {
         public UserDto userDto;
 

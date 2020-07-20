@@ -47,8 +47,21 @@ namespace GrowingStrongAPI.Services
                                                  Constants.AuthenticateUserMessages.InvalidCredentials);
                 return response;
             }
-            
-            User user = _userRepository.GetByEmailAddress(emailAddress);
+
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetByEmailAddress(emailAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                return response;
+            }
 
             if (user is null)
             {
@@ -68,8 +81,10 @@ namespace GrowingStrongAPI.Services
                     return response;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
                 return response;
@@ -88,28 +103,49 @@ namespace GrowingStrongAPI.Services
 
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            response.ResponseStatus.SetOk(Constants.AuthenticateUserMessages.Success);
+            response.ResponseStatus.SetOk();
             response.UserDto = userDto;
             response.Token = tokenString;
 
             return response;
         }
 
-        public IEnumerable<User> GetAll()
+        public GetUserByIdResponse GetUserById(int id)
         {
-            _logger.LogInformation("Getting all users");
+            GetUserByIdResponse response = new GetUserByIdResponse();
 
-            return _userRepository.GetAll();
-        }
-
-        public UserDto GetById(int id)
-        {
             _logger.LogInformation($"Getting user by id: {id}");
 
-            User user = _userRepository.GetById(id);
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetById(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+
+                return response;
+            }
+
+            if (user is null)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.NOT_FOUND,
+                                                 Constants.SharedErrorMessages.UserDoesNotExist);
+
+                return response;
+            }
+
             UserDto userDto = _mapper.Map<UserDto>(user);
 
-            return userDto;
+            response.ResponseStatus.SetOk();
+            response.UserDto = userDto;
+
+            return response;
         }
 
         public CreateUserResponse Create(User user, string password)
@@ -123,7 +159,21 @@ namespace GrowingStrongAPI.Services
                 return response;
             }
 
-            if (!(_userRepository.GetByEmailAddress(user.EmailAddress) is null))
+            User retrievedUser = null;
+
+            try
+            {
+               retrievedUser = _userRepository.GetByEmailAddress(user.EmailAddress);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+            }
+
+            if (!(retrievedUser is null))
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
                                                  Constants.CreateUserMessages.UserAlreadyExists);
@@ -140,6 +190,7 @@ namespace GrowingStrongAPI.Services
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.CreateUserMessages.FailedToCreatePasswordHash);
                 return response;
@@ -153,12 +204,13 @@ namespace GrowingStrongAPI.Services
                 _logger.LogInformation("Successfully created user");
 
                 UserDto userDto = _mapper.Map<UserDto>(user);
-                response.ResponseStatus.SetOk(Constants.CreateUserMessages.Success);
+                response.ResponseStatus.SetOk();
                 response.userDto = userDto;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
+
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
                                                  Constants.CreateUserMessages.FailedToCreateUser);
             }
@@ -166,12 +218,50 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public IList<FoodEntryDto> GetUserFoodEntries(int userId)
+        public GetUserFoodEntriesResponse GetUserFoodEntries(int userId)
         {
-            List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
-            List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
 
-            return foodEntryDtos;
+            GetUserFoodEntriesResponse response = new GetUserFoodEntriesResponse();
+
+            User user = null;
+
+            try
+            {
+                user = _userRepository.GetById(userId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
+                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+            }
+
+            if (user is null)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.NOT_FOUND,
+                                                 Constants.SharedErrorMessages.UserDoesNotExist);
+
+                return response;
+            }
+
+            try
+            {
+                List<FoodEntry> foodEntries = _foodEntryRepository.GetFoodEntriesOfUser(userId);
+                List<FoodEntryDto> foodEntryDtos = _mapper.Map<List<FoodEntryDto>>(foodEntries);
+
+                response.ResponseStatus.SetOk();
+                response.FoodEntryDtos = foodEntryDtos;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.GetUserFoodEntriesMessages.FailedToRetrieveFoodEntry);
+            }
+
+            return response;
         }
     }
 }
