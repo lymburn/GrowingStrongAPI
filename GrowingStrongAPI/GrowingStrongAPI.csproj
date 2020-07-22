@@ -11,7 +11,7 @@
     <StartAction>Project</StartAction>
     <ExternalConsole>true</ExternalConsole>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:62971</ApplicationURL>
+    <ApplicationURL>http://localhost:56636</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />

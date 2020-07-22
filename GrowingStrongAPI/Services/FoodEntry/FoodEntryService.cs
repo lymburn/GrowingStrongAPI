@@ -47,7 +47,7 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public UpdateFoodEntryResponse UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
+        public UpdateFoodEntryResponse UpdateFoodEntry(Guid foodEntryId, FoodEntryUpdateModel updateModel)
         {
             //TODO: Handle food entry with non existent id
             UpdateFoodEntryResponse response = new UpdateFoodEntryResponse();
@@ -69,7 +69,7 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public DeleteFoodEntryResponse DeleteFoodEntry(int foodEntryId)
+        public DeleteFoodEntryResponse DeleteFoodEntry(Guid foodEntryId)
         {
             //TODO: Handle food entry with non existent id
 
