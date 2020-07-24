@@ -21,18 +21,13 @@ namespace GrowingStrongAPI.DataAccess
             _logger = logger;
         }
 
-        public FoodEntry GetByUserAndFoodId(int userId, int foodId)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<FoodEntry> GetFoodEntriesOfUser(int userId)
         {
             try
             {
                 string foodEntriesSql = $"select * from get_user_food_entries ({userId})";
 
-                var foodEntryDictionary = new Dictionary<int, FoodEntry>();
+                var foodEntryDictionary = new Dictionary<Guid, FoodEntry>();
 
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
@@ -77,6 +72,8 @@ namespace GrowingStrongAPI.DataAccess
         {
             try
             {
+                Guid foodEntryId = createModel.FoodEntryId;
+
                 int userId = createModel.UserId;
 
                 int foodId = createModel.FoodId;
@@ -87,7 +84,7 @@ namespace GrowingStrongAPI.DataAccess
 
                 int selectedServingId = createModel.SelectedServingId;
 
-                string sql = $"select * from create_food_entry({userId},{foodId},'{dateAdded}',{servingAmount},{selectedServingId})";
+                string sql = $"call create_food_entry('{foodEntryId}',{userId},{foodId},'{dateAdded}',{servingAmount},{selectedServingId})";
 
 
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
@@ -103,7 +100,7 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel)
+        public void UpdateFoodEntry(Guid foodEntryId, FoodEntryUpdateModel updateModel)
         {
             try
             {
@@ -111,7 +108,7 @@ namespace GrowingStrongAPI.DataAccess
 
                 int selectedServingId = updateModel.SelectedServingId;
 
-                string sql = $"call update_food_entry_serving_size({foodEntryId},{servingAmount},{selectedServingId})";
+                string sql = $"call update_food_entry_serving_size('{foodEntryId}',{servingAmount},{selectedServingId})";
 
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
@@ -127,11 +124,11 @@ namespace GrowingStrongAPI.DataAccess
 
         }
 
-        public void DeleteFoodEntry(int foodEntryId)
+        public void DeleteFoodEntry(Guid foodEntryId)
         {
             try
             {
-                string sql = $"call delete_food_entry({foodEntryId})";
+                string sql = $"call delete_food_entry('{foodEntryId}')";
 
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {

@@ -3,6 +3,8 @@ namespace GrowingStrongAPI.Models
 {
     public class FoodEntryCreateModel
     {
+        public Guid FoodEntryId { get; set; }
+
         public int UserId { get; set; }
 
         public int FoodId { get; set; }

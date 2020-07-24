@@ -40,7 +40,7 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateFoodEntry(int id, [FromBody] FoodEntryUpdateModel updateModel)
+        public IActionResult UpdateFoodEntry(Guid id, [FromBody] FoodEntryUpdateModel updateModel)
         {
             UpdateFoodEntryResponse response = _foodEntryService.UpdateFoodEntry(id, updateModel);
 
@@ -53,7 +53,7 @@ namespace GrowingStrongAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteFoodEntry(int id)
+        public IActionResult DeleteFoodEntry(Guid id)
         {
             DeleteFoodEntryResponse response = _foodEntryService.DeleteFoodEntry(id);
 

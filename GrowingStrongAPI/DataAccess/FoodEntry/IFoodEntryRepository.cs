@@ -7,10 +7,9 @@ namespace GrowingStrongAPI.DataAccess
 {
     public interface IFoodEntryRepository
     {
-        FoodEntry GetByUserAndFoodId(int userId, int foodId);
         List<FoodEntry> GetFoodEntriesOfUser(int userId);
         void CreateFoodEntry(FoodEntryCreateModel createModel);
-        void UpdateFoodEntry(int foodEntryId, FoodEntryUpdateModel updateModel);
-        void DeleteFoodEntry(int foodEntryId);
+        void UpdateFoodEntry(Guid foodEntryId, FoodEntryUpdateModel updateModel);
+        void DeleteFoodEntry(Guid foodEntryId);
     }
 }

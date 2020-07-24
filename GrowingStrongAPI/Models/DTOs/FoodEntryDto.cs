@@ -8,7 +8,7 @@ namespace GrowingStrongAPI.Models
     public class FoodEntryDto
     {
         [Required]
-        public int FoodEntryId { get; set; }
+        public Guid FoodEntryId { get; set; }
 
         [Required]
         public DateTime DateAdded { get; set; }
