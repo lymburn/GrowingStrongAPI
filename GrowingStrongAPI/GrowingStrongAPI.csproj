@@ -11,7 +11,7 @@
     <StartAction>Project</StartAction>
     <ExternalConsole>true</ExternalConsole>
     <LaunchUrl>api</LaunchUrl>
-    <ApplicationURL>http://localhost:56636</ApplicationURL>
+    <ApplicationURL>http://localhost:30379</ApplicationURL>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -43,6 +43,7 @@
     <Folder Include="Services\Food\" />
     <Folder Include="Models\Responses\FoodService\" />
     <Folder Include="DataAccess\Food\" />
+    <Folder Include="Helpers\Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DataAccess\Repository.cs" />

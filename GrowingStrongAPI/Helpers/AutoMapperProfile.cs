@@ -10,6 +10,9 @@ namespace GrowingStrongAPI.Helpers
         public AutoMapperProfile()
         {
             CreateMap<RegistrationModel, User>();
+            CreateMap<RegistrationModel, UserDto>();
+            CreateMap<RegistrationModel, UserProfileDto>();
+            CreateMap<RegistrationModel, UserTargetsDto>();
             CreateMap<User, UserDto>();
             CreateMap<FoodEntry, FoodEntryDto>();
             CreateMap<Food, FoodDto>();

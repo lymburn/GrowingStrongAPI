@@ -4,6 +4,7 @@ using Npgsql;
 using Dapper;
 using GrowingStrongAPI.Helpers;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Models;
 using GrowingStrongAPI.Helpers.Schemas;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace GrowingStrongAPI.DataAccess
             }
         }
 
-        public int Create(User user)
+        public int Register(RegistrationModel registrationModel)
         {
             try
             {
@@ -71,7 +72,18 @@ namespace GrowingStrongAPI.DataAccess
                 {
                     int id;
 
-                    string sql = $@"select * from create_user_account(@EmailAddress, @PasswordHash, @PasswordSalt)";
+                    string sql = $@"select * from register_user(@EmailAddress,
+                                                                @PasswordHash,
+                                                                @PasswordSalt,
+                                                                @BirthDate,
+                                                                @Sex,
+                                                                @Height,
+                                                                @Weight,
+                                                                @Bmr,
+                                                                @ActivityLevel,
+                                                                @Tdee,
+                                                                @WeightGoalTimeline)";
+
 
                     NpgsqlCommand command = new NpgsqlCommand(sql, connection);
 
@@ -81,13 +93,56 @@ namespace GrowingStrongAPI.DataAccess
 
                     NpgsqlParameter passwordSaltParam = new NpgsqlParameter("@PasswordSalt", NpgsqlTypes.NpgsqlDbType.Bytea);
 
-                    emailParam.Value = user.EmailAddress;
+                    NpgsqlParameter birthDateParam = new NpgsqlParameter("@BirthDate", NpgsqlTypes.NpgsqlDbType.Date);
 
-                    passwordHashParam.Value = user.PasswordHash;
+                    NpgsqlParameter sexParam = new NpgsqlParameter("@Sex", NpgsqlTypes.NpgsqlDbType.Varchar);
 
-                    passwordSaltParam.Value = user.PasswordSalt;
+                    NpgsqlParameter heightParam = new NpgsqlParameter("@Height", NpgsqlTypes.NpgsqlDbType.Double);
 
-                    NpgsqlParameter[] parameters = new NpgsqlParameter[] { emailParam, passwordHashParam, passwordSaltParam, };
+                    NpgsqlParameter weightParam = new NpgsqlParameter("@Weight", NpgsqlTypes.NpgsqlDbType.Double);
+
+                    NpgsqlParameter bmrParam = new NpgsqlParameter("@Bmr", NpgsqlTypes.NpgsqlDbType.Double);
+
+                    NpgsqlParameter activityLevelParam = new NpgsqlParameter("@ActivityLevel", NpgsqlTypes.NpgsqlDbType.Varchar);
+
+                    NpgsqlParameter tdeeParam = new NpgsqlParameter("@Tdee", NpgsqlTypes.NpgsqlDbType.Double);
+
+                    NpgsqlParameter weightGoalTimelineParam = new NpgsqlParameter("@WeightGoalTimeline", NpgsqlTypes.NpgsqlDbType.Varchar);
+
+                    emailParam.Value = registrationModel.EmailAddress;
+
+                    passwordHashParam.Value = registrationModel.PasswordHash;
+
+                    passwordSaltParam.Value = registrationModel.PasswordSalt;
+
+                    birthDateParam.Value = registrationModel.BirthDate;
+
+                    sexParam.Value = registrationModel.Sex;
+
+                    heightParam.Value = registrationModel.Height;
+
+                    weightParam.Value = registrationModel.Weight;
+
+                    bmrParam.Value = registrationModel.Bmr;
+
+                    activityLevelParam.Value = registrationModel.ActivityLevel;
+
+                    tdeeParam.Value = registrationModel.Tdee;
+
+                    weightGoalTimelineParam.Value = registrationModel.WeightGoalTimeline;
+
+
+                    NpgsqlParameter[] parameters = new NpgsqlParameter[] { emailParam,
+                                                                           passwordHashParam,
+                                                                           passwordSaltParam,
+                                                                           birthDateParam,
+                                                                           sexParam,
+                                                                           heightParam,
+                                                                           weightParam,
+                                                                           bmrParam,
+                                                                           activityLevelParam,
+                                                                           tdeeParam,
+                                                                           weightGoalTimelineParam};
 
                     command.Parameters.AddRange(parameters);
 

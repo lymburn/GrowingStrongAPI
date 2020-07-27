@@ -1,5 +1,7 @@
 ﻿using System;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Models;
+
 using System.Collections.Generic;
 
 namespace GrowingStrongAPI.DataAccess
@@ -8,6 +10,6 @@ namespace GrowingStrongAPI.DataAccess
     {
         User GetById(int id);
         User GetByEmailAddress(string emailAddress);
-        int Create(User user);
+        int Register(RegistrationModel registrationModel);
     }
 }

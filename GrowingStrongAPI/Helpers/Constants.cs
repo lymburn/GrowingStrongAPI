@@ -23,12 +23,14 @@ namespace GrowingStrongAPI.Helpers
             public const string FailedToGenerateJWT = "Failed to generate JWT";
         }
 
-        public static class CreateUserMessages
+        public static class RegisterUserMessages
         {
             public const string NullOrEmptyCredentials = "Email or password is null or empty";
             public const string UserAlreadyExists = "User with this email already exists";
             public const string FailedToCreatePasswordHash = "Failed to create password hash";
             public const string FailedToCreateUser = "Failed to create user";
+            public const string CalculatedBMRIsInvalid = "Calculated invalid BMR";
+            public const string CalculatedTDEEIsInvalid = "Calculated invalid TDEE";
         }
 
         public static class GetUserFoodEntriesMessages
@@ -55,6 +57,20 @@ namespace GrowingStrongAPI.Helpers
         {
             public const string InvalidQuery = "Invalid query text";
             public const string FailedToGetFoods = "Failed to get foods";
+        }
+
+        public static class ActivityLevels
+        {
+            public const string Sedentary = "Sedentary";
+            public const string Light = "Light";
+            public const string Moderate = "Moderate";
+            public const string Extreme = "Extreme";
+        }
+
+        public static class Sexes
+        {
+            public const string Male = "Male";
+            public const string Female = "Female";
         }
     }
 }

@@ -22,6 +22,7 @@ namespace GrowingStrongAPI.Tests
         Mock<ILogger<IUserService>> mockLogger;
         Mock<IMapper> mockMapper;
         Mock<IJwtHelper> mockJwtHelper;
+        Mock<IUserProfileCalculator> mockUserProfileCalculator;
 
         [TestInitialize]
         public void TestInitialize()
@@ -32,13 +33,15 @@ namespace GrowingStrongAPI.Tests
             mockLogger = new Mock<ILogger<IUserService>>();
             mockMapper = new Mock<IMapper>();
             mockJwtHelper = new Mock<IJwtHelper>();
+            mockUserProfileCalculator = new Mock<IUserProfileCalculator>();
 
             userService = new UserService(mockUserRepository.Object,
                                           mockFoodEntryRepository.Object,
                                           mockMapper.Object,
                                           mockLogger.Object,
                                           mockAuthenticationHelper.Object,
-                                          mockJwtHelper.Object);
+                                          mockJwtHelper.Object,
+                                          mockUserProfileCalculator.Object);
         }
 
         [TestMethod]
@@ -79,7 +82,8 @@ namespace GrowingStrongAPI.Tests
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
-                                                           mockJwtHelper.Object);
+                                                           mockJwtHelper.Object,
+                                                           mockUserProfileCalculator.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
@@ -106,7 +110,8 @@ namespace GrowingStrongAPI.Tests
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
-                                                           mockJwtHelper.Object);
+                                                           mockJwtHelper.Object,
+                                                           mockUserProfileCalculator.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
@@ -134,7 +139,8 @@ namespace GrowingStrongAPI.Tests
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
-                                                           mockJwtHelper.Object);
+                                                           mockJwtHelper.Object,
+                                                           mockUserProfileCalculator.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
@@ -158,11 +164,12 @@ namespace GrowingStrongAPI.Tests
                                                                     .Throws(exception);
 
             userService = new UserService(mockUserRepository.Object,
-                                                           mockFoodEntryRepository.Object,
-                                                           mockMapper.Object,
-                                                           mockLogger.Object,
-                                                           mockAuthenticationHelper.Object,
-                                                           mockJwtHelper.Object);
+                                                          mockFoodEntryRepository.Object,
+                                                          mockMapper.Object,
+                                                          mockLogger.Object,
+                                                          mockAuthenticationHelper.Object,
+                                                          mockJwtHelper.Object,
+                                                          mockUserProfileCalculator.Object);
 
             string email = "test123@gmail.com";
             string password = "Password1";
@@ -200,7 +207,8 @@ namespace GrowingStrongAPI.Tests
                                                            mockMapper.Object,
                                                            mockLogger.Object,
                                                            mockAuthenticationHelper.Object,
-                                                           mockJwtHelper.Object);
+                                                           mockJwtHelper.Object,
+                                                           mockUserProfileCalculator.Object);
 
 
             AuthenticateUserResponse response = userService.Authenticate(email, password);

@@ -19,13 +19,15 @@ namespace GrowingStrongAPI.Services
         private readonly ILogger _logger;
         private IAuthenticationHelper _authenticationHelper;
         private IJwtHelper _jwtHelper;
+        private IUserProfileCalculator _userProfileCalculator;
 
         public UserService(IUserRepository userRepository,
                            IFoodEntryRepository foodEntryRepository,
                            IMapper mapper,
                            ILogger<IUserService> logger,
                            IAuthenticationHelper authenticationHelper,
-                           IJwtHelper jwtHelper)
+                           IJwtHelper jwtHelper,
+                           IUserProfileCalculator userProfileCalculator)
         {
             _userRepository = userRepository;
             _foodEntryRepository = foodEntryRepository;
@@ -33,6 +35,7 @@ namespace GrowingStrongAPI.Services
             _logger = logger;
             _authenticationHelper = authenticationHelper;
             _jwtHelper = jwtHelper;
+            _userProfileCalculator = userProfileCalculator;
         }
 
         public AuthenticateUserResponse Authenticate(string emailAddress, string password)
@@ -148,14 +151,14 @@ namespace GrowingStrongAPI.Services
             return response;
         }
 
-        public CreateUserResponse Create(User user, string password)
+        public RegisterUserResponse Register(RegistrationModel registrationModel)
         {
-            CreateUserResponse response = new CreateUserResponse();
+            RegisterUserResponse response = new RegisterUserResponse();
 
-            if (string.IsNullOrEmpty(user.EmailAddress) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(registrationModel.EmailAddress) || string.IsNullOrEmpty(registrationModel.Password))
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.BAD_REQUEST,
-                                                 Constants.CreateUserMessages.NullOrEmptyCredentials);
+                                                 Constants.RegisterUserMessages.NullOrEmptyCredentials);
                 return response;
             }
 
@@ -163,7 +166,7 @@ namespace GrowingStrongAPI.Services
 
             try
             {
-               retrievedUser = _userRepository.GetByEmailAddress(user.EmailAddress);
+               retrievedUser = _userRepository.GetByEmailAddress(registrationModel.EmailAddress);
             }
             catch (Exception e)
             {
@@ -176,43 +179,76 @@ namespace GrowingStrongAPI.Services
             if (!(retrievedUser is null))
             {
                 response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
-                                                 Constants.CreateUserMessages.UserAlreadyExists);
+                                                 Constants.RegisterUserMessages.UserAlreadyExists);
                 return response;
             }
 
             try
             {
                 byte[] passwordHash, passwordSalt;
-                _authenticationHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
+                _authenticationHelper.CreatePasswordHash(registrationModel.Password, out passwordHash, out passwordSalt);
+                registrationModel.PasswordHash = passwordHash;
+                registrationModel.PasswordSalt = passwordSalt;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.CreateUserMessages.FailedToCreatePasswordHash);
+                                                 Constants.RegisterUserMessages.FailedToCreatePasswordHash);
                 return response;
             }
 
+            double bmr = _userProfileCalculator.CalculateBMR(registrationModel.Sex,
+                                                             registrationModel.Weight,
+                                                             registrationModel.Height,
+                                                             registrationModel.BirthDate.Age());
+
+            if (bmr == 0)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.RegisterUserMessages.CalculatedBMRIsInvalid);
+
+                return response;
+            }
+
+            registrationModel.Bmr = bmr;
+
+            double tdee = _userProfileCalculator.CalculateTDEE(registrationModel.Bmr,
+                                                               registrationModel.ActivityLevel);
+
+            if (tdee == 0)
+            {
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.RegisterUserMessages.CalculatedTDEEIsInvalid);
+
+                return response;
+            }
+
+            registrationModel.Tdee = tdee;
+
             try
             {
-                int userId = _userRepository.Create(user);
-                user.UserId = userId;
+                int userId = _userRepository.Register(registrationModel);
 
-                _logger.LogInformation("Successfully created user");
+                UserDto userDto = _mapper.Map<UserDto>(registrationModel);
+                userDto.UserId = userId;
 
-                UserDto userDto = _mapper.Map<UserDto>(user);
+                UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(registrationModel);
+                UserTargetsDto userTargetsDto = _mapper.Map<UserTargetsDto>(registrationModel);
+
+                _logger.LogInformation("Successfully registered user");
                 response.ResponseStatus.SetOk();
                 response.userDto = userDto;
+                response.userProfileDto = userProfileDto;
+                response.userTargetsDto = userTargetsDto;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.CreateUserMessages.FailedToCreateUser);
+                                                 Constants.RegisterUserMessages.FailedToCreateUser);
             }
             
             return response;
