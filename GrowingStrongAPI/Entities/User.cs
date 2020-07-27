@@ -10,5 +10,7 @@ namespace GrowingStrongAPI.Entities
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public IList<FoodEntry> FoodEntries { get; set; }
+        public UserProfile UserProfile { get; set; }
+        public UserTargets UserTargets { get; set; }
     }
 }

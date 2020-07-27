@@ -234,14 +234,13 @@ namespace GrowingStrongAPI.Services
                 UserDto userDto = _mapper.Map<UserDto>(registrationModel);
                 userDto.UserId = userId;
 
-                UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(registrationModel);
-                UserTargetsDto userTargetsDto = _mapper.Map<UserTargetsDto>(registrationModel);
+                userDto.Profile = _mapper.Map<UserProfileDto>(registrationModel);
+                userDto.Targets = _mapper.Map<UserTargetsDto>(registrationModel);
+
 
                 _logger.LogInformation("Successfully registered user");
                 response.ResponseStatus.SetOk();
                 response.userDto = userDto;
-                response.userProfileDto = userProfileDto;
-                response.userTargetsDto = userTargetsDto;
             }
             catch (Exception e)
             {

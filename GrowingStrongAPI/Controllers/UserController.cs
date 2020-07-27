@@ -83,11 +83,11 @@ namespace GrowingStrongAPI.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegistrationModel registrationModel)
         {
-            RegisterUserResponse createResponse = _userService.Register(registrationModel);
+            RegisterUserResponse registerResponse = _userService.Register(registrationModel);
 
-            if (createResponse.ResponseStatus.HasError())
+            if (registerResponse.ResponseStatus.HasError())
             {
-                return StatusCode(createResponse.ResponseStatus.Status, createResponse.ResponseStatus.Message);
+                return StatusCode(registerResponse.ResponseStatus.Status, registerResponse.ResponseStatus.Message);
             }
 
             AuthenticateUserResponse authenticateResponse = _userService.Authenticate(registrationModel.EmailAddress,
@@ -100,9 +100,7 @@ namespace GrowingStrongAPI.Controllers
 
             return Ok(new
             {
-                User = createResponse.userDto,
-                UserProfile = createResponse.userProfileDto,
-                UserTargets = createResponse.userTargetsDto,
+                User = registerResponse.userDto,
                 authenticateResponse.Token
             });;
         }
