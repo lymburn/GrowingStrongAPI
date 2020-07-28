@@ -234,8 +234,8 @@ namespace GrowingStrongAPI.Services
                 UserDto userDto = _mapper.Map<UserDto>(registrationModel);
                 userDto.UserId = userId;
 
-                userDto.Profile = _mapper.Map<UserProfileDto>(registrationModel);
-                userDto.Targets = _mapper.Map<UserTargetsDto>(registrationModel);
+                userDto.UserProfile = _mapper.Map<UserProfileDto>(registrationModel);
+                userDto.UserTargets = _mapper.Map<UserTargetsDto>(registrationModel);
 
 
                 _logger.LogInformation("Successfully registered user");

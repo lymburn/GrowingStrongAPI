@@ -17,6 +17,8 @@ namespace GrowingStrongAPI.Helpers
             CreateMap<FoodEntry, FoodEntryDto>();
             CreateMap<Food, FoodDto>();
             CreateMap<Serving, ServingDto>();
+            CreateMap<UserProfile, UserProfileDto>();
+            CreateMap<UserTargets, UserTargetsDto>();
         }
     }
 }

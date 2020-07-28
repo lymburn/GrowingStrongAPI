@@ -50,11 +50,19 @@ namespace GrowingStrongAPI.DataAccess
             {
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
-                    string sql = $@"SELECT * FROM get_user_account_by_email('{emailAddress}')";
+                    string sql = $@"SELECT * FROM get_user_by_email('{emailAddress}')";
 
                     connection.Open();
 
-                    User user = connection.Query<User>(sql).AsList().FirstOrDefault();
+                    User user = connection.Query<User, UserProfile, UserTargets, User>(
+                        sql,
+                        map: (user, profile, targets) =>
+                        {
+                            user.UserProfile = profile;
+                            user.UserTargets = targets;
+                            return user;
+                        },
+                        splitOn: "birth_date,goal_weight").AsList().FirstOrDefault();
                     return user;
                 }
             }
