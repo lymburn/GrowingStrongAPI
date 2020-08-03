@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GrowingStrongAPI.Entities;
+using GrowingStrongAPI.Models;
 using Dapper;
 using System.Linq;
 using GrowingStrongAPI.Helpers;
@@ -54,6 +55,44 @@ namespace GrowingStrongAPI.DataAccess
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        public void CreateFood(FoodDto foodDto)
+        {
+            //Create food first
+            int foodId = foodDto.FoodId;
+            string foodName = foodDto.FoodName;
+
+            string createFoodSql = $"call create_food({foodId}, '{foodName}')";
+
+            using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+            {
+                connection.Open();
+
+                connection.Execute(createFoodSql);
+            }
+
+            //Create servings of food
+            List<ServingDto> servings = foodDto.Servings.AsList();
+
+            foreach (ServingDto serving in servings)
+            {
+                double quantity = serving.Quantity;
+                string unit = serving.Unit;
+                double kcal = serving.Kcal;
+                double carb = serving.Carb;
+                double fat = serving.Fat;
+                double protein = serving.Protein;
+
+                string createServingSql = $"call create_serving({foodId}, {quantity}, '{unit}', {kcal}, {carb}, {fat}, {protein})";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(createServingSql);
+                }
             }
         }
     }

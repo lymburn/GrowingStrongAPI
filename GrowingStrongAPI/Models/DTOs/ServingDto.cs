@@ -5,7 +5,6 @@ namespace GrowingStrongAPI.Models
 {
     public class ServingDto
     {
-        [Required]
         public int ServingId { get; set; }
 
         [Required]

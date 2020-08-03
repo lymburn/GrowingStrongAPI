@@ -57,5 +57,26 @@ namespace GrowingStrongAPI.Services
 
             return response;
         }
+
+        public CreateFoodResponse CreateFood(FoodDto foodDto)
+        {
+            CreateFoodResponse response = new CreateFoodResponse();
+
+            try
+            {
+                _foodRepository.CreateFood(foodDto);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.CreateFoodMessages.FailedToCreateFood);
+            }
+
+            return response;
+        }
     }
 }

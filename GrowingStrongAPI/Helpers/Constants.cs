@@ -59,6 +59,11 @@ namespace GrowingStrongAPI.Helpers
             public const string FailedToGetFoods = "Failed to get foods";
         }
 
+        public static class CreateFoodMessages
+        {
+            public const string FailedToCreateFood = "Failed to create food";
+        }
+
         public static class ActivityLevels
         {
             public const string Sedentary = "Sedentary";
