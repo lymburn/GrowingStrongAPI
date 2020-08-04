@@ -11,5 +11,6 @@ namespace GrowingStrongAPI.DataAccess
         User GetById(int id);
         User GetByEmailAddress(string emailAddress);
         int Register(RegistrationModel registrationModel);
+        void UpdateUserDetails(UserDetailsUpdateModel updateModel);
     }
 }

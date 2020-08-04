@@ -298,5 +298,28 @@ namespace GrowingStrongAPI.Services
 
             return response;
         }
+
+        public UpdateUserDetailsResponse UpdateUserDetails(UserDetailsUpdateModel updateModel)
+        {
+            UpdateUserDetailsResponse response = new UpdateUserDetailsResponse();
+
+            //TODO: Handle with non existent user id
+
+            try
+            {
+                _userRepository.UpdateUserDetails(updateModel);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 Constants.UpdateFoodEntryMessages.FailedToUpdateFoodEntry);
+            }
+
+            return response;
+        }
     }
 }

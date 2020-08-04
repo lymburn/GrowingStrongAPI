@@ -38,6 +38,11 @@ namespace GrowingStrongAPI.Helpers
             public const string FailedToRetrieveFoodEntry = "Failed to retrieve food entries for this user";
         }
 
+        public static class UpdateUserDetailsResponse
+        {
+            public const string FailedToUpdateUserDetails = "Failed to update user details";
+        }
+
         public static class CreateFoodEntryMessages
         {
             public const string FailedToCreateFoodEntry = "Failed to create food entry";

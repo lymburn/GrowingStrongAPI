@@ -11,5 +11,6 @@ namespace GrowingStrongAPI.Services
         GetUserByIdResponse GetUserById(int id);
         RegisterUserResponse Register(RegistrationModel registrationModel);
         GetUserFoodEntriesResponse GetUserFoodEntries(int userId);
+        UpdateUserDetailsResponse UpdateUserDetails(UserDetailsUpdateModel updateModel);
     }
 }

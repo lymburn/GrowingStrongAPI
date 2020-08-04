@@ -79,6 +79,21 @@ namespace GrowingStrongAPI.Controllers
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult UpdateUserDetails(int id, [FromBody] UserDetailsUpdateModel updateModel)
+        {
+            updateModel.UserId = id;
+
+            UpdateUserDetailsResponse response = _userService.UpdateUserDetails(updateModel);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
         [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegistrationModel registrationModel)
