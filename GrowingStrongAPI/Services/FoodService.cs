@@ -52,7 +52,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.GetFoodsStartingWithPatternMessages.FailedToGetFoods);
+                                                 e.ToString());
             }
 
             return response;
@@ -73,7 +73,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.CreateFoodMessages.FailedToCreateFood);
+                                                 e.ToString());
             }
 
             return response;

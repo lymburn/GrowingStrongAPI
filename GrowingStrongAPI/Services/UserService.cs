@@ -62,7 +62,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                                                 e.ToString());
                 return response;
             }
 
@@ -89,7 +89,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+                                                 e.ToString());
                 return response;
             }
 
@@ -130,7 +130,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                                                 e.ToString());
 
                 return response;
             }
@@ -173,7 +173,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                                 e.ToString());
             }
 
             if (!(retrievedUser is null))
@@ -195,7 +195,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.RegisterUserMessages.FailedToCreatePasswordHash);
+                                                 e.ToString());
                 return response;
             }
 
@@ -247,7 +247,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.RegisterUserMessages.FailedToCreateUser);
+                                                 e.ToString());
             }
             
             return response;
@@ -269,7 +269,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.CONFLICT,
-                                 Constants.SharedErrorMessages.FailedToRetrieveUser);
+                                 e.ToString());
             }
 
             if (user is null)
@@ -293,7 +293,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.GetUserFoodEntriesMessages.FailedToRetrieveFoodEntry);
+                                                 e.ToString());
             }
 
             return response;
@@ -316,7 +316,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.UpdateFoodEntryMessages.FailedToUpdateFoodEntry);
+                                                 e.ToString());
             }
 
             return response;
