@@ -94,6 +94,36 @@ namespace GrowingStrongAPI.Controllers
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
+        [HttpPut("{id}/profile")]
+        public IActionResult UpdateUserProfile(int id, [FromBody] UserProfile profile)
+        {
+            profile.UserId = id;
+
+            UpdateUserProfileResponse response = _userService.UpdateUserProfile(profile);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
+        [HttpPut("{id}/targets")]
+        public IActionResult UpdateUserTargets(int id, [FromBody] UserTargets targets)
+        {
+            targets.UserId = id;
+
+            UpdateUserTargetsResponse response = _userService.UpdateUserTargets(targets);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
         [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegistrationModel registrationModel)

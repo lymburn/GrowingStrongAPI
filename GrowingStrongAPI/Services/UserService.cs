@@ -321,5 +321,51 @@ namespace GrowingStrongAPI.Services
 
             return response;
         }
+
+        public UpdateUserProfileResponse UpdateUserProfile(UserProfile profile)
+        {
+            UpdateUserProfileResponse response = new UpdateUserProfileResponse();
+
+            //TODO: Handle with non existent user id
+
+            try
+            {
+                _userRepository.UpdateUserProfile(profile);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                 e.ToString());
+            }
+
+            return response;
+        }
+
+        public UpdateUserTargetsResponse UpdateUserTargets(UserTargets targets)
+        {
+            UpdateUserTargetsResponse response = new UpdateUserTargetsResponse();
+
+            //TODO: Handle with non existent user id
+
+            try
+            {
+                _userRepository.UpdateUserTargets(targets);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                 e.ToString());
+            }
+
+            return response;
+        }
     }
 }

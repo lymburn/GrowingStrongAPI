@@ -175,6 +175,57 @@ namespace GrowingStrongAPI.DataAccess
             }
 
         }
+
+        public void UpdateUserProfile(UserProfile profile)
+        {
+            try
+            {
+                int userId = profile.UserId;
+                string birthDate = profile.BirthDate.ToString("yyyy-MM-dd");
+                string sex = profile.Sex;
+                double height = profile.Height;
+                double weight = profile.Weight;
+                double bmr = profile.Bmr;
+                string activityLevel = profile.ActivityLevel;
+                double tdee = profile.Tdee;
+
+                string sql = $"call update_user_profile({userId},'{birthDate}','{sex}',{height},{weight},{bmr},'{activityLevel}',{tdee})";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void UpdateUserTargets(UserTargets targets)
+        {
+            try
+            {
+                int userId = targets.UserId;
+                double goalWeight = targets.GoalWeight;
+                string weightGoalTimeline = targets.WeightGoalTimeline;
+
+                string sql = $"call update_user({userId},{goalWeight},'{weightGoalTimeline}')";
+
+                using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
+                {
+                    connection.Open();
+
+                    connection.Execute(sql);
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 
 }
