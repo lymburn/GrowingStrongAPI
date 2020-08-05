@@ -212,7 +212,7 @@ namespace GrowingStrongAPI.DataAccess
                 double goalWeight = targets.GoalWeight;
                 string weightGoalTimeline = targets.WeightGoalTimeline;
 
-                string sql = $"call update_user({userId},{goalWeight},'{weightGoalTimeline}')";
+                string sql = $"call update_user_targets({userId},{goalWeight},'{weightGoalTimeline}')";
 
                 using (var connection = _dbConnectionFactory.CreateConnection(ConfigurationsHelper.ConnectionString))
                 {
