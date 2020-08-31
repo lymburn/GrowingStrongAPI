@@ -147,7 +147,7 @@ namespace GrowingStrongAPI.Tests
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
             Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.INTERNAL_SERVER_ERROR);
-            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+            Assert.IsTrue(response.ResponseStatus.Message.Contains(exception.Message));
         }
 
         [TestMethod]
@@ -176,7 +176,7 @@ namespace GrowingStrongAPI.Tests
             AuthenticateUserResponse response = userService.Authenticate(email, password);
 
             Assert.AreEqual(response.ResponseStatus.Status, ResponseStatusCode.INTERNAL_SERVER_ERROR);
-            Assert.AreEqual(response.ResponseStatus.Message, Constants.AuthenticateUserMessages.InvalidPasswordHashOrSaltLength);
+            Assert.IsTrue(response.ResponseStatus.Message.Contains(exception.Message));
         }
 
         [TestMethod]
