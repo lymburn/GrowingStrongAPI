@@ -52,7 +52,28 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.GetFoodsStartingWithPatternMessages.FailedToGetFoods);
+                                                 e.ToString());
+            }
+
+            return response;
+        }
+
+        public CreateFoodResponse CreateFood(FoodDto foodDto)
+        {
+            CreateFoodResponse response = new CreateFoodResponse();
+
+            try
+            {
+                _foodRepository.CreateFood(foodDto);
+
+                response.ResponseStatus.SetOk();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.ToString());
+
+                response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
+                                                 e.ToString());
             }
 
             return response;

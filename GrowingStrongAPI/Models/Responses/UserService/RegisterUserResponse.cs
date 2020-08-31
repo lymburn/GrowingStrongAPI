@@ -1,11 +1,11 @@
 ﻿using System;
 namespace GrowingStrongAPI.Models
 {
-    public class CreateUserResponse : BaseResponse
+    public class RegisterUserResponse : BaseResponse
     {
         public UserDto userDto;
 
-        public CreateUserResponse()
+        public RegisterUserResponse()
         {
             userDto = new UserDto();
         }

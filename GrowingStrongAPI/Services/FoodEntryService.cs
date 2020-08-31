@@ -41,7 +41,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.CreateFoodEntryMessages.FailedToCreateFoodEntry);
+                                                 e.ToString());
             }
 
             return response;
@@ -63,7 +63,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.UpdateFoodEntryMessages.FailedToUpdateFoodEntry);
+                                                 e.ToString());
             }
 
             return response;
@@ -86,7 +86,7 @@ namespace GrowingStrongAPI.Services
                 _logger.LogError(e.ToString());
 
                 response.ResponseStatus.SetError(ResponseStatusCode.INTERNAL_SERVER_ERROR,
-                                                 Constants.DeleteFoodEntryMessages.FailedToDeleteFoodEntry);
+                                                 e.ToString());
             }
 
             return response;

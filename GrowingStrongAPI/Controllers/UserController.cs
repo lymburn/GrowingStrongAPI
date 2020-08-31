@@ -79,20 +79,64 @@ namespace GrowingStrongAPI.Controllers
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
 
+        [HttpPut("{id}")]
+        public IActionResult UpdateUserDetails(int id, [FromBody] UserDetailsUpdateModel updateModel)
+        {
+            updateModel.UserId = id;
+
+            UpdateUserDetailsResponse response = _userService.UpdateUserDetails(updateModel);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
+        [HttpPut("{id}/profile")]
+        public IActionResult UpdateUserProfile(int id, [FromBody] UserProfile profile)
+        {
+            profile.UserId = id;
+
+            UpdateUserProfileResponse response = _userService.UpdateUserProfile(profile);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
+        [HttpPut("{id}/targets")]
+        public IActionResult UpdateUserTargets(int id, [FromBody] UserTargets targets)
+        {
+            targets.UserId = id;
+
+            UpdateUserTargetsResponse response = _userService.UpdateUserTargets(targets);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
+
         [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register([FromBody]RegistrationModel registrationModel)
         {
-            User user = _mapper.Map<User>(registrationModel);
+            RegisterUserResponse registerResponse = _userService.Register(registrationModel);
 
-            CreateUserResponse createResponse = _userService.Create(user, registrationModel.Password);
-
-            if (createResponse.ResponseStatus.HasError())
+            if (registerResponse.ResponseStatus.HasError())
             {
-                return StatusCode(createResponse.ResponseStatus.Status, createResponse.ResponseStatus.Message);
+                return StatusCode(registerResponse.ResponseStatus.Status, registerResponse.ResponseStatus.Message);
             }
 
-            AuthenticateUserResponse authenticateResponse = _userService.Authenticate(user.EmailAddress, registrationModel.Password);
+            AuthenticateUserResponse authenticateResponse = _userService.Authenticate(registrationModel.EmailAddress,
+                                                                                      registrationModel.Password);
 
             if (authenticateResponse.ResponseStatus.HasError())
             {
@@ -101,9 +145,9 @@ namespace GrowingStrongAPI.Controllers
 
             return Ok(new
             {
-                User = createResponse.userDto,
+                User = registerResponse.userDto,
                 authenticateResponse.Token
-            });
+            });;
         }
     }
 }

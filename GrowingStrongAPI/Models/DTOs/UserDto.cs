@@ -12,5 +12,9 @@ namespace GrowingStrongAPI.Models
 
         [Required]
         public int UserId { get; set; }
+
+        public UserProfileDto Profile { get; set; }
+
+        public UserTargetsDto Targets { get; set; }
     }
 }

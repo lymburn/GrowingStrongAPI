@@ -34,5 +34,19 @@ namespace GrowingStrongAPI.Controllers
 
             return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateFood([FromBody] FoodDto foodDto)
+        {
+            CreateFoodResponse response = _foodService.CreateFood(foodDto);
+
+            if (!response.ResponseStatus.HasError())
+            {
+                return Ok();
+            }
+
+            return StatusCode(response.ResponseStatus.Status, response.ResponseStatus.Message);
+        }
     }
 }

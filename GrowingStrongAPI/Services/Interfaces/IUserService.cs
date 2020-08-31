@@ -9,7 +9,10 @@ namespace GrowingStrongAPI.Services
     {
         AuthenticateUserResponse Authenticate(string emailAddress, string password);
         GetUserByIdResponse GetUserById(int id);
-        CreateUserResponse Create(User user, string password);
+        RegisterUserResponse Register(RegistrationModel registrationModel);
         GetUserFoodEntriesResponse GetUserFoodEntries(int userId);
+        UpdateUserDetailsResponse UpdateUserDetails(UserDetailsUpdateModel updateModel);
+        UpdateUserProfileResponse UpdateUserProfile(UserProfile profile);
+        UpdateUserTargetsResponse UpdateUserTargets(UserTargets targets);
     }
 }
